@@ -1,5 +1,6 @@
 import { Link, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
 import { 
   Home, 
   Link as LinkIcon, 
@@ -9,10 +10,16 @@ import {
   Network, 
   Map, 
   User,
-  Bell,
-  Settings
+  Activity
 } from "lucide-react";
 import { motion } from "framer-motion";
+import { RealTimeHUD } from "./realtime/RealTimeHUD";
+import { NotificationFeed } from "./notifications/NotificationFeed";
+import { DeveloperDrawer } from "./DeveloperDrawer";
+import { useNotifications } from "@/hooks/useNotifications";
+import { useAgoraStore } from "@/stores/useAgoraStore";
+import { useState } from "react";
+import { X } from "lucide-react";
 
 const Logo = () => (
   <Link to="/" className="flex items-center gap-2 group">
@@ -49,17 +56,32 @@ const navItems = [
 
 export const Layout = ({ children }: { children: React.ReactNode }) => {
   const location = useLocation();
+  const [showTestnetBanner, setShowTestnetBanner] = useState(true);
+  const { latency, showPerformanceMetrics } = useAgoraStore();
+  
+  // Initialize notifications hook
+  useNotifications();
 
   return (
     <div className="min-h-screen bg-bg-primary text-text-primary">
       {/* Testnet Banner */}
-      <motion.div 
-        initial={{ y: -50, opacity: 0 }}
-        animate={{ y: 0, opacity: 1 }}
-        className="bg-gradient-to-r from-orange-primary/20 to-blue-electric/20 border-b border-orange-primary/30 px-4 py-2 text-center text-sm"
-      >
-        <span className="font-semibold">Conway Testnet</span> — No Real Value • Learn & Experiment Safely
-      </motion.div>
+      {showTestnetBanner && (
+        <motion.div 
+          initial={{ y: -50, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          exit={{ y: -50, opacity: 0 }}
+          className="bg-gradient-to-r from-orange-primary/20 to-blue-electric/20 border-b border-orange-primary/30 px-4 py-2 text-center text-sm relative"
+        >
+          <span className="font-semibold">Conway Testnet</span> — No Real Value • Learn & Experiment Safely
+          <button
+            onClick={() => setShowTestnetBanner(false)}
+            className="absolute right-4 top-1/2 -translate-y-1/2 hover:text-orange-primary transition-colors"
+            aria-label="Dismiss banner"
+          >
+            <X className="w-4 h-4" />
+          </button>
+        </motion.div>
+      )}
 
       {/* Header */}
       <header className="sticky top-0 z-50 glass-surface border-b border-border/50">
@@ -100,20 +122,46 @@ export const Layout = ({ children }: { children: React.ReactNode }) => {
 
             {/* Right Actions */}
             <div className="flex items-center gap-3">
-              <Button variant="ghost" size="icon" className="relative">
-                <Bell className="w-5 h-5" />
-                <span className="absolute top-1 right-1 w-2 h-2 bg-orange-primary rounded-full" />
-              </Button>
-              <Button variant="ghost" size="icon">
-                <Settings className="w-5 h-5" />
-              </Button>
-              <Button className="bg-gradient-to-r from-orange-primary to-orange-secondary hover:opacity-90">
-                Launch App
-              </Button>
+              <DeveloperDrawer />
+              <Link to="/connect">
+                <Button className="bg-gradient-to-r from-orange-primary to-orange-secondary hover:opacity-90">
+                  Launch App
+                </Button>
+              </Link>
             </div>
           </div>
         </div>
       </header>
+
+      {/* Real-Time Latency Simulator */}
+      {showPerformanceMetrics && (
+        <motion.div
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="fixed bottom-4 left-4 z-50 hidden lg:block"
+        >
+          <Card className="p-4 glass-surface border-blue-electric/30">
+            <div className="flex items-center gap-2 mb-2">
+              <Activity className="w-4 h-4 text-blue-electric" />
+              <span className="text-xs font-semibold">Performance</span>
+            </div>
+            <div className="grid grid-cols-3 gap-3 text-xs">
+              <div className="text-center">
+                <div className="font-bold text-success mb-1">{latency.mutation}ms</div>
+                <div className="text-[10px] text-text-muted">Mutation</div>
+              </div>
+              <div className="text-center">
+                <div className="font-bold text-blue-electric mb-1">{latency.notification}ms</div>
+                <div className="text-[10px] text-text-muted">Notify</div>
+              </div>
+              <div className="text-center">
+                <div className="font-bold text-orange-primary mb-1">{latency.endToEnd}ms</div>
+                <div className="text-[10px] text-text-muted">E2E</div>
+              </div>
+            </div>
+          </Card>
+        </motion.div>
+      )}
 
       {/* Main Content */}
       <main>{children}</main>

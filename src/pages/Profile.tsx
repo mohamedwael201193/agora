@@ -2,25 +2,37 @@ import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { Copy, ExternalLink, Trophy, TrendingUp, Target, Zap } from "lucide-react";
+import { 
+  Copy, 
+  ExternalLink, 
+  Trophy, 
+  TrendingUp, 
+  Target, 
+  Zap, 
+  Link as LinkIcon, 
+  Search, 
+  DollarSign,
+  CheckCircle,
+  Hammer
+} from "lucide-react";
 import { motion } from "framer-motion";
 import { toast } from "sonner";
 
 const badges = [
-  { id: 1, tier: "bronze", name: "First Chain", icon: "🔗", unlocked: true, progress: 100 },
-  { id: 2, tier: "bronze", name: "Market Explorer", icon: "🔍", unlocked: true, progress: 100 },
-  { id: 3, tier: "bronze", name: "Predictor", icon: "🎯", unlocked: true, progress: 100 },
-  { id: 4, tier: "silver", name: "Active Trader", icon: "💹", unlocked: false, progress: 68 },
-  { id: 5, tier: "silver", name: "Market Maker", icon: "🏗️", unlocked: false, progress: 0 },
-  { id: 6, tier: "gold", name: "Prediction Expert", icon: "⭐", unlocked: false, progress: 12 },
-  { id: 7, tier: "platinum", name: "Chain Legend", icon: "💎", unlocked: false, progress: 0 },
+  { id: 1, tier: "bronze", name: "First Chain", icon: LinkIcon, unlocked: true, progress: 100 },
+  { id: 2, tier: "bronze", name: "Market Explorer", icon: Search, unlocked: true, progress: 100 },
+  { id: 3, tier: "bronze", name: "Predictor", icon: Target, unlocked: true, progress: 100 },
+  { id: 4, tier: "silver", name: "Active Trader", icon: TrendingUp, unlocked: false, progress: 68 },
+  { id: 5, tier: "silver", name: "Market Maker", icon: Hammer, unlocked: false, progress: 0 },
+  { id: 6, tier: "gold", name: "Prediction Expert", icon: Trophy, unlocked: false, progress: 12 },
+  { id: 7, tier: "platinum", name: "Chain Legend", icon: Zap, unlocked: false, progress: 0 },
 ];
 
 const recentActivity = [
-  { id: 1, type: "bet", action: "Placed bet on 'Bitcoin $100k'", amount: "+$250", time: "2 hours ago" },
-  { id: 2, type: "win", action: "Won market 'AI Breakthrough'", amount: "+$420", time: "5 hours ago" },
-  { id: 3, type: "create", action: "Created market 'Tech IPO'", amount: "", time: "1 day ago" },
-  { id: 4, type: "bet", action: "Placed bet on 'Climate Summit'", amount: "+$150", time: "2 days ago" },
+  { id: 1, type: "bet", action: "Placed bet on 'Bitcoin $100k'", amount: "+$250", time: "2 hours ago", icon: Target },
+  { id: 2, type: "win", action: "Won market 'AI Breakthrough'", amount: "+$420", time: "5 hours ago", icon: CheckCircle },
+  { id: 3, type: "create", action: "Created market 'Tech IPO'", amount: "", time: "1 day ago", icon: Hammer },
+  { id: 4, type: "bet", action: "Placed bet on 'Climate Summit'", amount: "+$150", time: "2 days ago", icon: DollarSign },
 ];
 
 export default function Profile() {
@@ -139,31 +151,36 @@ export default function Profile() {
                         {tier} Chains
                       </h3>
                       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-                        {tierBadges.map((badge) => (
-                          <motion.div
-                            key={badge.id}
-                            whileHover={{ scale: 1.05 }}
-                            className={`p-4 rounded-lg border text-center ${
-                              badge.unlocked
-                                ? "bg-surface-elevated border-orange-primary/50"
-                                : "bg-surface/50 border-border/50 opacity-60"
-                            }`}
-                          >
-                            <div className="text-4xl mb-2">{badge.icon}</div>
-                            <div className="text-xs font-medium mb-1">{badge.name}</div>
-                            {!badge.unlocked && badge.progress > 0 && (
-                              <div className="mt-2">
-                                <div className="h-1 bg-surface rounded-full overflow-hidden">
-                                  <div 
-                                    className="h-full bg-orange-primary"
-                                    style={{ width: `${badge.progress}%` }}
-                                  />
-                                </div>
-                                <div className="text-xs text-text-muted mt-1">{badge.progress}%</div>
+                        {tierBadges.map((badge) => {
+                          const BadgeIcon = badge.icon;
+                          return (
+                            <motion.div
+                              key={badge.id}
+                              whileHover={{ scale: 1.05 }}
+                              className={`p-4 rounded-lg border text-center ${
+                                badge.unlocked
+                                  ? "bg-surface-elevated border-orange-primary/50"
+                                  : "bg-surface/50 border-border/50 opacity-60"
+                              }`}
+                            >
+                              <div className="w-12 h-12 rounded-lg bg-orange-primary/20 flex items-center justify-center mx-auto mb-2">
+                                <BadgeIcon className="w-6 h-6 text-orange-primary" />
                               </div>
-                            )}
-                          </motion.div>
-                        ))}
+                              <div className="text-xs font-medium mb-1">{badge.name}</div>
+                              {!badge.unlocked && badge.progress > 0 && (
+                                <div className="mt-2">
+                                  <div className="h-1 bg-surface rounded-full overflow-hidden">
+                                    <div 
+                                      className="h-full bg-orange-primary"
+                                      style={{ width: `${badge.progress}%` }}
+                                    />
+                                  </div>
+                                  <div className="text-xs text-text-muted mt-1">{badge.progress}%</div>
+                                </div>
+                              )}
+                            </motion.div>
+                          );
+                        })}
                       </div>
                     </div>
                   );
@@ -189,12 +206,7 @@ export default function Profile() {
 
               <div className="space-y-4">
                 {recentActivity.map((activity, index) => {
-                  const icons = {
-                    bet: "🎯",
-                    win: "✅",
-                    create: "🏗️",
-                  };
-                  const icon = icons[activity.type as keyof typeof icons];
+                  const ActivityIcon = activity.icon;
 
                   return (
                     <motion.div
@@ -205,7 +217,9 @@ export default function Profile() {
                       className="p-4 bg-surface-elevated rounded-lg"
                     >
                       <div className="flex items-start gap-3">
-                        <span className="text-2xl">{icon}</span>
+                        <div className="w-10 h-10 rounded-lg bg-blue-electric/20 flex items-center justify-center flex-shrink-0">
+                          <ActivityIcon className="w-5 h-5 text-blue-electric" />
+                        </div>
                         <div className="flex-1 min-w-0">
                           <p className="text-sm font-medium">{activity.action}</p>
                           <p className="text-xs text-text-muted mt-1">{activity.time}</p>

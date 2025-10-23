@@ -160,17 +160,23 @@ export default function Connect() {
             <h3 className="text-xl font-bold mb-4">Next Steps</h3>
             <div className="grid md:grid-cols-3 gap-4">
               <div className="p-4 bg-surface-elevated rounded-lg">
-                <div className="text-2xl mb-2">1️⃣</div>
+                <div className="w-10 h-10 rounded-full bg-orange-primary/10 flex items-center justify-center mb-3">
+                  <span className="text-lg font-bold text-orange-primary">1</span>
+                </div>
                 <h4 className="font-semibold mb-1">Explore Markets</h4>
                 <p className="text-sm text-text-muted">Browse prediction markets and place your first bet</p>
               </div>
               <div className="p-4 bg-surface-elevated rounded-lg">
-                <div className="text-2xl mb-2">2️⃣</div>
+                <div className="w-10 h-10 rounded-full bg-blue-electric/10 flex items-center justify-center mb-3">
+                  <span className="text-lg font-bold text-blue-electric">2</span>
+                </div>
                 <h4 className="font-semibold mb-1">Try Chrono-Echoes</h4>
                 <p className="text-sm text-text-muted">Experience time-based betting with instant resolution</p>
               </div>
               <div className="p-4 bg-surface-elevated rounded-lg">
-                <div className="text-2xl mb-2">3️⃣</div>
+                <div className="w-10 h-10 rounded-full bg-purple-deep/10 flex items-center justify-center mb-3">
+                  <span className="text-lg font-bold text-purple-deep">3</span>
+                </div>
                 <h4 className="font-semibold mb-1">Build Markets</h4>
                 <p className="text-sm text-text-muted">Use Foundry to create your own prediction markets</p>
               </div>

@@ -1,6 +1,6 @@
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Network, Layers, Zap, Shield } from "lucide-react";
+import { Network, Layers, Zap, Shield, User, Clock, ArrowRightLeft, CheckCircle } from "lucide-react";
 import { motion } from "framer-motion";
 
 const architectureFeatures = [
@@ -174,7 +174,9 @@ export default function Architecture() {
             {/* Flow diagram */}
             <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
               <div className="p-6 bg-surface-elevated rounded-lg border border-orange-primary/30">
-                <div className="text-3xl mb-3 text-center">👤</div>
+                <div className="w-12 h-12 rounded-full bg-orange-primary/20 flex items-center justify-center mx-auto mb-3">
+                  <User className="w-6 h-6 text-orange-primary" />
+                </div>
                 <h4 className="font-semibold text-center mb-2">User Action</h4>
                 <p className="text-xs text-text-muted text-center">
                   Place bet on personal chain
@@ -182,7 +184,9 @@ export default function Architecture() {
               </div>
 
               <div className="p-6 bg-surface-elevated rounded-lg border border-blue-electric/30">
-                <div className="text-3xl mb-3 text-center">⚡</div>
+                <div className="w-12 h-12 rounded-full bg-blue-electric/20 flex items-center justify-center mx-auto mb-3">
+                  <Zap className="w-6 h-6 text-blue-electric" />
+                </div>
                 <h4 className="font-semibold text-center mb-2">Block Creation</h4>
                 <p className="text-xs text-text-muted text-center">
                   &lt;300ms confirmation
@@ -190,7 +194,9 @@ export default function Architecture() {
               </div>
 
               <div className="p-6 bg-surface-elevated rounded-lg border border-purple-deep/30">
-                <div className="text-3xl mb-3 text-center">🔄</div>
+                <div className="w-12 h-12 rounded-full bg-purple-deep/20 flex items-center justify-center mx-auto mb-3">
+                  <ArrowRightLeft className="w-6 h-6 text-purple-deep" />
+                </div>
                 <h4 className="font-semibold text-center mb-2">Cross-Chain</h4>
                 <p className="text-xs text-text-muted text-center">
                   Message to market chain
@@ -198,7 +204,9 @@ export default function Architecture() {
               </div>
 
               <div className="p-6 bg-surface-elevated rounded-lg border border-cyan-bright/30">
-                <div className="text-3xl mb-3 text-center">✅</div>
+                <div className="w-12 h-12 rounded-full bg-cyan-bright/20 flex items-center justify-center mx-auto mb-3">
+                  <CheckCircle className="w-6 h-6 text-cyan-bright" />
+                </div>
                 <h4 className="font-semibold text-center mb-2">UI Update</h4>
                 <p className="text-xs text-text-muted text-center">
                   Push notification sent

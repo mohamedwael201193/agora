@@ -4,7 +4,25 @@ import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Hammer, Plus, Code, Rocket } from "lucide-react";
+import { 
+  Hammer, 
+  Plus, 
+  Code, 
+  Rocket, 
+  BarChart3, 
+  Target, 
+  TrendingUp, 
+  Timer, 
+  HelpCircle, 
+  Dices, 
+  Eye, 
+  Clock, 
+  ScrollText,
+  Palette,
+  Zap,
+  Plug,
+  Lightbulb
+} from "lucide-react";
 import { motion } from "framer-motion";
 import foundryPreview from "@/assets/foundry-preview.jpg";
 
@@ -13,38 +31,38 @@ const templates = [
     id: 1,
     name: "Binary Market",
     description: "Simple yes/no prediction market",
-    icon: "📊",
+    icon: BarChart3,
     popular: true,
   },
   {
     id: 2,
     name: "Multiple Choice",
     description: "Market with 3+ possible outcomes",
-    icon: "🎯",
+    icon: Target,
     popular: true,
   },
   {
     id: 3,
     name: "Numeric Range",
     description: "Predict a value within a range",
-    icon: "📈",
+    icon: TrendingUp,
     popular: false,
   },
   {
     id: 4,
     name: "Time-Bounded",
     description: "Event resolution within timeframe",
-    icon: "⏱️",
+    icon: Timer,
     popular: false,
   },
 ];
 
 const components = [
-  { id: "question", label: "Question Block", icon: "❓" },
-  { id: "outcomes", label: "Outcome Options", icon: "🎲" },
-  { id: "oracle", label: "Oracle Connection", icon: "🔮" },
-  { id: "timebound", label: "Time Bounds", icon: "⏰" },
-  { id: "rules", label: "Participation Rules", icon: "📜" },
+  { id: "question", label: "Question Block", icon: HelpCircle },
+  { id: "outcomes", label: "Outcome Options", icon: Dices },
+  { id: "oracle", label: "Oracle Connection", icon: Eye },
+  { id: "timebound", label: "Time Bounds", icon: Clock },
+  { id: "rules", label: "Participation Rules", icon: ScrollText },
 ];
 
 export default function FoundryBuilder() {
@@ -113,7 +131,9 @@ export default function FoundryBuilder() {
                   }`}
                 >
                   <div className="flex items-start gap-3">
-                    <span className="text-2xl">{template.icon}</span>
+                    <div className="w-10 h-10 rounded-lg bg-orange-primary/20 flex items-center justify-center flex-shrink-0">
+                      <template.icon className="w-5 h-5 text-orange-primary" />
+                    </div>
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2 mb-1">
                         <h4 className="font-semibold text-sm">{template.name}</h4>
@@ -182,7 +202,9 @@ export default function FoundryBuilder() {
                   whileTap={{ scale: 0.95 }}
                   className="p-4 bg-surface-elevated rounded-lg border border-border hover:border-orange-primary/50 transition-all text-center"
                 >
-                  <div className="text-3xl mb-2">{component.icon}</div>
+                  <div className="w-12 h-12 rounded-lg bg-blue-electric/20 flex items-center justify-center mx-auto mb-2">
+                    <component.icon className="w-6 h-6 text-blue-electric" />
+                  </div>
                   <div className="text-sm font-medium">{component.label}</div>
                 </motion.button>
               ))}
@@ -232,28 +254,28 @@ export default function FoundryBuilder() {
           <div className="grid md:grid-cols-4 gap-6">
             <div className="text-center">
               <div className="w-16 h-16 rounded-full bg-orange-primary/20 flex items-center justify-center mx-auto mb-3">
-                <span className="text-3xl">🎨</span>
+                <Palette className="w-8 h-8 text-orange-primary" />
               </div>
               <h4 className="font-semibold mb-2">Visual Builder</h4>
               <p className="text-sm text-text-muted">Intuitive drag-and-drop interface</p>
             </div>
             <div className="text-center">
               <div className="w-16 h-16 rounded-full bg-blue-electric/20 flex items-center justify-center mx-auto mb-3">
-                <span className="text-3xl">⚡</span>
+                <Zap className="w-8 h-8 text-blue-electric" />
               </div>
               <h4 className="font-semibold mb-2">Instant Deploy</h4>
               <p className="text-sm text-text-muted">One-click market launch</p>
             </div>
             <div className="text-center">
               <div className="w-16 h-16 rounded-full bg-purple-deep/20 flex items-center justify-center mx-auto mb-3">
-                <span className="text-3xl">🔌</span>
+                <Plug className="w-8 h-8 text-purple-deep" />
               </div>
               <h4 className="font-semibold mb-2">Oracle Integration</h4>
               <p className="text-sm text-text-muted">Connect external data sources</p>
             </div>
             <div className="text-center">
               <div className="w-16 h-16 rounded-full bg-cyan-bright/20 flex items-center justify-center mx-auto mb-3">
-                <span className="text-3xl">💡</span>
+                <Lightbulb className="w-8 h-8 text-cyan-bright" />
               </div>
               <h4 className="font-semibold mb-2">Smart Templates</h4>
               <p className="text-sm text-text-muted">Pre-built market types</p>
