@@ -97,19 +97,12 @@ export const AgoraLogo = ({ className = "" }: AgoraLogoProps) => {
       </motion.div>
 
       {/* Animated Wordmark */}
-      <div className="flex items-center overflow-hidden">
-        {"AGORA".split("").map((letter, i) => (
+      <div className="flex items-center">
+        {["A", "G", "O", "R", "A"].map((letter, i) => (
           <motion.span
             key={i}
-            className="text-2xl font-bold inline-block"
-            initial={{ y: 20, opacity: 0 }}
-            animate={{ y: 0, opacity: 1 }}
-            transition={{ 
-              delay: i * 0.1,
-              type: "spring",
-              stiffness: 300,
-              damping: 20
-            }}
+            className="text-2xl font-bold leading-none"
+            initial={{ y: 0, opacity: 1 }}
             whileHover={{
               y: -3,
               transition: { duration: 0.2 }
@@ -119,6 +112,7 @@ export const AgoraLogo = ({ className = "" }: AgoraLogoProps) => {
               WebkitBackgroundClip: "text",
               WebkitTextFillColor: "transparent",
               backgroundClip: "text",
+              display: "inline-block",
             }}
           >
             {letter}

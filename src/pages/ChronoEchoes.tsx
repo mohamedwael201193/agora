@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Clock, Zap, Timer } from "lucide-react";
+import { Clock, Zap, Timer, Target, DollarSign } from "lucide-react";
 import { motion } from "framer-motion";
 import chronoPreview from "@/assets/chrono-echoes-preview.jpg";
 
@@ -211,7 +211,7 @@ export default function ChronoEchoes() {
           <div className="grid md:grid-cols-3 gap-6">
             <div>
               <div className="w-12 h-12 rounded-lg bg-purple-deep/20 flex items-center justify-center mb-3">
-                <span className="text-2xl">⚡</span>
+                <Zap className="w-6 h-6 text-purple-deep" />
               </div>
               <h4 className="font-semibold mb-2">Select Time Window</h4>
               <p className="text-sm text-text-muted">
@@ -220,7 +220,7 @@ export default function ChronoEchoes() {
             </div>
             <div>
               <div className="w-12 h-12 rounded-lg bg-orange-primary/20 flex items-center justify-center mb-3">
-                <span className="text-2xl">🎯</span>
+                <Target className="w-6 h-6 text-orange-primary" />
               </div>
               <h4 className="font-semibold mb-2">Place Your Bet</h4>
               <p className="text-sm text-text-muted">
@@ -229,7 +229,7 @@ export default function ChronoEchoes() {
             </div>
             <div>
               <div className="w-12 h-12 rounded-lg bg-blue-electric/20 flex items-center justify-center mb-3">
-                <span className="text-2xl">💰</span>
+                <DollarSign className="w-6 h-6 text-blue-electric" />
               </div>
               <h4 className="font-semibold mb-2">Auto-Settlement</h4>
               <p className="text-sm text-text-muted">
