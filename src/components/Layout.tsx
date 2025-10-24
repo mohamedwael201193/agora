@@ -20,39 +20,34 @@ import { useNotifications } from "@/hooks/useNotifications";
 import { useAgoraStore } from "@/stores/useAgoraStore";
 import { useState } from "react";
 import { X } from "lucide-react";
+import { AgoraLogo } from "./ui/AgoraLogo";
+import { NavigationMenu } from "./ui/NavigationMenu";
+import { MobileNav } from "./ui/MobileNav";
+import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "./ui/dropdown-menu";
 
-const Logo = () => (
-  <Link to="/" className="flex items-center gap-2 group">
-    <motion.div
-      className="relative w-10 h-10"
-      whileHover={{ scale: 1.05 }}
-      transition={{ type: "spring", stiffness: 400, damping: 10 }}
-    >
-      <motion.div
-        className="absolute inset-0 rounded-lg bg-gradient-to-br from-orange-primary to-blue-electric opacity-20 blur-xl"
-        animate={{ scale: [1, 1.2, 1] }}
-        transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
-      />
-      <div className="relative w-full h-full rounded-lg bg-gradient-to-br from-orange-primary to-blue-electric flex items-center justify-center font-bold text-white text-xl">
-        A
-      </div>
-    </motion.div>
-    <span className="text-2xl font-bold bg-gradient-to-r from-orange-primary to-blue-electric bg-clip-text text-transparent">
-      Agora
-    </span>
-  </Link>
-);
-
-const navItems = [
+// Navigation structure - Primary items always visible, secondary in dropdown
+const primaryNavItems = [
   { path: "/", label: "Home", icon: Home },
-  { path: "/connect", label: "Connect", icon: LinkIcon },
   { path: "/marketplace", label: "Marketplace", icon: Store },
   { path: "/chrono-echoes", label: "Chrono-Echoes", icon: Clock },
-  { path: "/foundry", label: "Foundry", icon: Hammer },
+];
+
+const secondaryNavItems = [
+  { path: "/foundry", label: "Foundry Builder", icon: Hammer },
   { path: "/architecture", label: "Architecture", icon: Network },
   { path: "/roadmap", label: "Roadmap", icon: Map },
-  { path: "/profile", label: "Profile", icon: User },
+  { path: "/connect", label: "Connect Chain", icon: LinkIcon },
 ];
+
+const allNavItems = [...primaryNavItems, ...secondaryNavItems];
 
 export const Layout = ({ children }: { children: React.ReactNode }) => {
   const location = useLocation();
@@ -87,47 +82,67 @@ export const Layout = ({ children }: { children: React.ReactNode }) => {
       <header className="sticky top-0 z-50 glass-surface border-b border-border/50">
         <div className="container mx-auto px-4 py-4">
           <div className="flex items-center justify-between">
-            <Logo />
+            {/* Animated Logo */}
+            <AgoraLogo />
             
-            {/* Desktop Navigation */}
-            <nav className="hidden lg:flex items-center gap-1">
-              {navItems.map((item) => {
-                const isActive = location.pathname === item.path;
-                const Icon = item.icon;
-                
-                return (
-                  <Link key={item.path} to={item.path}>
-                    <Button 
-                      variant="ghost" 
-                      className={`gap-2 relative ${
-                        isActive 
-                          ? "text-orange-primary bg-orange-primary/10" 
-                          : "text-text-secondary hover:text-text-primary hover:bg-surface"
-                      }`}
-                    >
-                      <Icon className="w-4 h-4" />
-                      {item.label}
-                      {isActive && (
-                        <motion.div
-                          layoutId="activeNav"
-                          className="absolute bottom-0 left-0 right-0 h-0.5 bg-gradient-to-r from-orange-primary to-blue-electric"
-                          transition={{ type: "spring", stiffness: 380, damping: 30 }}
-                        />
-                      )}
-                    </Button>
-                  </Link>
-                );
-              })}
-            </nav>
+            {/* Desktop Navigation with Dropdown */}
+            <NavigationMenu 
+              primaryItems={primaryNavItems}
+              secondaryItems={secondaryNavItems}
+            />
 
             {/* Right Actions */}
             <div className="flex items-center gap-3">
+              {/* User Profile Menu */}
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button 
+                    variant="ghost" 
+                    className="hidden lg:flex items-center gap-2 hover:bg-surface"
+                  >
+                    <Avatar className="h-8 w-8">
+                      <AvatarImage src="" alt="User" />
+                      <AvatarFallback className="bg-gradient-to-br from-orange-primary to-blue-electric text-white text-sm font-semibold">
+                        U
+                      </AvatarFallback>
+                    </Avatar>
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent 
+                  align="end" 
+                  className="w-56 glass-surface border-border/80"
+                >
+                  <DropdownMenuLabel>My Account</DropdownMenuLabel>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem asChild>
+                    <Link to="/profile" className="cursor-pointer">
+                      <User className="mr-2 h-4 w-4" />
+                      <span>Profile</span>
+                    </Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem asChild>
+                    <Link to="/connect" className="cursor-pointer">
+                      <LinkIcon className="mr-2 h-4 w-4" />
+                      <span>Connect Chain</span>
+                    </Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem className="cursor-pointer text-destructive">
+                    Disconnect
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+
               <DeveloperDrawer />
-              <Link to="/connect">
+              
+              <Link to="/connect" className="hidden lg:block">
                 <Button className="bg-gradient-to-r from-orange-primary to-orange-secondary hover:opacity-90">
                   Launch App
                 </Button>
               </Link>
+
+              {/* Mobile Navigation */}
+              <MobileNav items={allNavItems} />
             </div>
           </div>
         </div>
@@ -171,7 +186,7 @@ export const Layout = ({ children }: { children: React.ReactNode }) => {
         <div className="container mx-auto px-4 py-12">
           <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
             <div>
-              <Logo />
+              <AgoraLogo />
               <p className="text-text-muted text-sm mt-4">
                 Real-time prediction markets and microchain platform on Linera.
               </p>
