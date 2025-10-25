@@ -19,10 +19,9 @@ import {
 } from "lucide-react";
 import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
+import { DemoModePill } from "./common/DemoModePill";
 import { DeveloperDrawer } from "./DeveloperDrawer";
 import { AgoraLogo } from "./ui/AgoraLogo";
-import { MobileNav } from "./ui/MobileNav";
-import { NavigationMenu } from "./ui/NavigationMenu";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 import {
   DropdownMenu,
@@ -32,22 +31,23 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "./ui/dropdown-menu";
+import { MobileNav } from "./ui/MobileNav";
+import { NavigationMenu } from "./ui/NavigationMenu";
 
 // Navigation structure - Primary items always visible, secondary in dropdown
 const primaryNavItems = [
   { path: "/", label: "Home", icon: Home },
   { path: "/marketplace", label: "Marketplace", icon: Store },
-  { path: "/chrono-echoes", label: "Chrono-Echoes", icon: Clock },
+  { path: "/game/confidence", label: "Game", icon: Target },
+  { path: "/roadmap", label: "Roadmap", icon: Map },
+  { path: "/foundry", label: "Foundry Builder", icon: Hammer },
 ];
 
 const secondaryNavItems = [
-  { path: "/game/confidence", label: "Game", icon: Target },
+  { path: "/chrono-echoes", label: "Chrono-Echoes", icon: Clock },
   { path: "/demo/counter", label: "Demo: Counter", icon: Zap },
   { path: "/demo/transfer", label: "Demo: Transfer", icon: Activity },
-  { path: "/foundry", label: "Foundry Builder", icon: Hammer },
   { path: "/architecture", label: "Architecture", icon: Network },
-  { path: "/roadmap", label: "Roadmap", icon: Map },
-  { path: "/connect", label: "Connect Chain", icon: LinkIcon },
 ];
 
 const allNavItems = [...primaryNavItems, ...secondaryNavItems];
@@ -97,6 +97,9 @@ export const Layout = ({ children }: { children: React.ReactNode }) => {
 
             {/* Right Actions */}
             <div className="flex items-center gap-3">
+              {/* Demo Mode Indicator */}
+              <DemoModePill />
+
               {/* User Profile Menu */}
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
@@ -141,7 +144,8 @@ export const Layout = ({ children }: { children: React.ReactNode }) => {
 
               <Link to="/connect" className="hidden lg:block">
                 <Button className="bg-gradient-to-r from-orange-primary to-orange-secondary hover:opacity-90">
-                  Launch App
+                  <LinkIcon className="mr-2 h-4 w-4" />
+                  Connect Chain
                 </Button>
               </Link>
 
@@ -289,7 +293,11 @@ export const Layout = ({ children }: { children: React.ReactNode }) => {
               </ul>
             </div>
           </div>
-          <div className="border-t border-border/50 mt-8 pt-8 text-center text-sm text-text-muted">
+          <div className="border-t border-border/50 mt-8 pt-8 text-center text-sm text-text-muted space-y-2">
+            <p className="text-amber-500/80 italic">
+              Wave 1 is a UX demo using simulated data. No on‑chain state is
+              created; testnet connectivity arrives in Wave 2.
+            </p>
             <p>
               © 2025 Agora. Built on Linera microchains. All rights reserved.
             </p>

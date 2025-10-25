@@ -1,5 +1,5 @@
-import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
+import { Link } from "react-router-dom";
 
 interface AgoraLogoProps {
   className?: string;
@@ -8,50 +8,51 @@ interface AgoraLogoProps {
 export const AgoraLogo = ({ className = "" }: AgoraLogoProps) => {
   return (
     <Link to="/" className={`flex items-center gap-3 group ${className}`}>
-      {/* Animated Orbital Icon */}
+      {/* Animated Logo Icon */}
       <motion.div
         className="relative w-10 h-10"
-        whileHover={{ scale: 1.1 }}
+        whileHover={{ scale: 1.1, rotate: 5 }}
         transition={{ type: "spring", stiffness: 400, damping: 10 }}
       >
         {/* Glowing Background */}
         <motion.div
           className="absolute inset-0 rounded-xl bg-gradient-to-br from-orange-primary to-blue-electric opacity-30 blur-xl"
-          animate={{ 
+          animate={{
             scale: [1, 1.3, 1],
-            opacity: [0.3, 0.5, 0.3]
+            opacity: [0.3, 0.5, 0.3],
           }}
-          transition={{ 
-            duration: 3, 
-            repeat: Infinity, 
-            ease: "easeInOut" 
+          transition={{
+            duration: 3,
+            repeat: Infinity,
+            ease: "easeInOut",
           }}
         />
-        
-        {/* Main Letter Circle */}
-        <div className="relative w-full h-full rounded-xl bg-gradient-to-br from-orange-primary via-orange-secondary to-blue-electric flex items-center justify-center font-bold text-white text-xl shadow-lg">
-          <motion.span
-            animate={{ 
-              textShadow: [
-                "0 0 8px rgba(255,107,53,0.8)",
-                "0 0 15px rgba(255,107,53,1)",
-                "0 0 8px rgba(255,107,53,0.8)"
-              ]
+
+        {/* SVG Logo */}
+        <div className="relative w-full h-full flex items-center justify-center">
+          <motion.img
+            src="/favicon.svg"
+            alt="Agora Logo"
+            className="w-full h-full"
+            animate={{
+              filter: [
+                "drop-shadow(0 0 8px rgba(255,107,53,0.6))",
+                "drop-shadow(0 0 15px rgba(255,107,53,0.9))",
+                "drop-shadow(0 0 8px rgba(255,107,53,0.6))",
+              ],
             }}
             transition={{ duration: 2, repeat: Infinity }}
-          >
-            A
-          </motion.span>
+          />
         </div>
-        
+
         {/* Orbital Ring */}
         <motion.div
           className="absolute inset-0 rounded-full border-2 border-orange-primary/40"
           animate={{ rotate: 360 }}
-          transition={{ 
-            duration: 8, 
-            repeat: Infinity, 
-            ease: "linear" 
+          transition={{
+            duration: 8,
+            repeat: Infinity,
+            ease: "linear",
           }}
           style={{ transformOrigin: "center" }}
         >
@@ -82,10 +83,10 @@ export const AgoraLogo = ({ className = "" }: AgoraLogoProps) => {
                   repeat: Infinity,
                   ease: "easeInOut",
                   delay: i * 0.2,
-                }
+                },
               }}
             >
-              <div 
+              <div
                 className="absolute inset-0 rounded-full blur-sm bg-blue-electric"
                 style={{
                   transform: `translateX(20px)`,
@@ -105,10 +106,11 @@ export const AgoraLogo = ({ className = "" }: AgoraLogoProps) => {
             initial={{ y: 0, opacity: 1 }}
             whileHover={{
               y: -3,
-              transition: { duration: 0.2 }
+              transition: { duration: 0.2 },
             }}
             style={{
-              background: "linear-gradient(135deg, hsl(14 100% 60%) 0%, hsl(190 100% 50%) 100%)",
+              background:
+                "linear-gradient(135deg, hsl(14 100% 60%) 0%, hsl(190 100% 50%) 100%)",
               WebkitBackgroundClip: "text",
               WebkitTextFillColor: "transparent",
               backgroundClip: "text",
@@ -125,8 +127,8 @@ export const AgoraLogo = ({ className = "" }: AgoraLogoProps) => {
         className="absolute inset-0 pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-500"
         initial={false}
       >
-        <svg 
-          className="w-full h-full" 
+        <svg
+          className="w-full h-full"
           style={{ position: "absolute", top: 0, left: 0 }}
         >
           <motion.line
@@ -142,7 +144,13 @@ export const AgoraLogo = ({ className = "" }: AgoraLogoProps) => {
             transition={{ duration: 0.6 }}
           />
           <defs>
-            <linearGradient id="electric-gradient" x1="0%" y1="0%" x2="100%" y2="0%">
+            <linearGradient
+              id="electric-gradient"
+              x1="0%"
+              y1="0%"
+              x2="100%"
+              y2="0%"
+            >
               <stop offset="0%" stopColor="hsl(14 100% 60%)" />
               <stop offset="100%" stopColor="hsl(190 100% 50%)" />
             </linearGradient>

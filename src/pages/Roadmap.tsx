@@ -1,249 +1,518 @@
-import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Check, Circle, Clock } from "lucide-react";
+import { Card } from "@/components/ui/card";
 import { motion } from "framer-motion";
+import { ArrowRight, Check, Circle, Clock, Target } from "lucide-react";
+import { Link } from "react-router-dom";
 
 const waves = [
   {
     id: 1,
-    title: "Foundation",
-    dateRange: "Q1 2025",
+    title: "Foundation (Demo)",
+    buildDates: "Oct 20 – Oct 29",
     status: "in-progress",
-    features: [
-      { name: "Personal chain claiming", status: "completed" },
-      { name: "Real-time HUD + notifications", status: "completed" },
-      { name: "Basic counter/transfer demos", status: "completed" },
-      { name: "Profile system v1", status: "in-progress" },
+    objective:
+      "Ship a polished, fully interactive demo that showcases the Linera microchain experience with simulated sub‑second finality and real-time UX.",
+    scope: [
+      "Confidence Flip calibration game (10 rounds, probability slider 5–95%, YES/NO predict)",
+      "Brier scoring with percentile, badges (Bronze/Silver/Gold/Platinum)",
+      "Achievement modal, calibration advice, persistent game history",
+      "Accessibility: screen-reader live region, ARIA for slider and buttons, full keyboard navigation",
+      "Profile integration (game stats, best score, total games, averages)",
+      "Recent history list, badge display, 'Play Now' CTA when empty",
+      "Real-time UX demo (live HUD + notifications, instant feedback patterns)",
+      "Precise financial math (integer math, 4-dec precision), BetTicket refactor",
+      "Performance: lazy loading for heavy routes, React.memo on hot components",
+      "Clear demo framing: header pill + footer disclaimer marking Wave 1 as simulated",
+    ],
+    links: [
+      { label: "Play Confidence Flip", to: "/game/confidence" },
+      { label: "Architecture", to: "/architecture" },
     ],
   },
   {
     id: 2,
-    title: "Core Markets",
-    dateRange: "Q2 2025",
-    status: "in-progress",
-    features: [
-      { name: "Marketplace launch (5 initial markets)", status: "in-progress" },
-      { name: "Basic betting interface", status: "in-progress" },
-      { name: "AddressBook + wallet persistence", status: "planned" },
-      { name: "Oracle integration MVP", status: "planned" },
+    title: "Core Markets (Conway integration MVP)",
+    buildDates: "Nov 3 – Nov 12",
+    status: "planned",
+    objective:
+      "Connect the demo to real Conway testnet microchains for core flows and introduce basic live markets.",
+    scope: [
+      "Conway testnet connection for personal/app chains (MVP)",
+      "Marketplace launch (initial markets) with on-chain placement and settlement (MVP)",
+      "Wallet persistence + basic address book",
+      "Oracle integration (MVP) for resolving at least one real market",
+      "Faucet/claim flow for test funds (if available)",
     ],
+    links: [],
   },
   {
     id: 3,
     title: "Advanced Features",
-    dateRange: "Q2-Q3 2025",
+    buildDates: "Nov 17 – Nov 26",
     status: "planned",
-    features: [
-      { name: "Chrono-Echoes platform", status: "planned" },
-      { name: "Cross-chain market resolution", status: "planned" },
-      { name: "Advanced analytics dashboard", status: "planned" },
-      { name: "Mobile-responsive optimization", status: "planned" },
+    objective:
+      "Deepen market mechanics, analytics, and cross-chain resolution fidelity.",
+    scope: [
+      "Chrono‑Echoes exploratory prototype",
+      "Cross‑chain market resolution with message guarantees",
+      "Advanced analytics dashboard (P/L, calibration, win rate over time)",
+      "Mobile-responsive polish across main flows",
     ],
+    links: [],
   },
   {
     id: 4,
     title: "Builder Tools",
-    dateRange: "Q3 2025",
+    buildDates: "Dec 1 – Dec 10",
     status: "planned",
-    features: [
-      { name: "Foundry Builder drag & drop", status: "planned" },
-      { name: "Smart contract templates", status: "planned" },
-      { name: "Market performance analytics", status: "planned" },
-      { name: "Revenue sharing tools", status: "planned" },
+    objective: "Enable fast market creation and operator workflows.",
+    scope: [
+      "Foundry Builder (drag & drop market builder) with presets",
+      "Smart contract templates (starter kits)",
+      "Market performance analytics for creators",
+      "Revenue sharing configuration",
     ],
+    links: [],
   },
   {
     id: 5,
     title: "AI & Automation",
-    dateRange: "Q4 2025",
+    buildDates: "Dec 15 – Jan 7",
     status: "planned",
-    features: [
-      { name: "AI market suggestions", status: "planned" },
-      { name: "Automated oracle feeds", status: "planned" },
-      { name: "Predictive analytics engine", status: "planned" },
-      { name: "Agent integration (MCP)", status: "planned" },
+    objective: "Introduce agentic workflows and predictive guidance.",
+    scope: [
+      "AI market suggestions",
+      "Automated oracle feeds (pipeline MVP)",
+      "Predictive analytics engine for risk/edge",
+      "Agent integration (MCP) for autonomous operations",
     ],
+    links: [],
   },
   {
     id: 6,
     title: "Ecosystem",
-    dateRange: "Q1 2026",
+    buildDates: "Jan 12 – Jan 21",
     status: "planned",
-    features: [
-      { name: "Third-party integrations", status: "planned" },
-      { name: "Advanced charting tools", status: "planned" },
-      { name: "Social trading features", status: "planned" },
-      { name: "Governance mechanisms", status: "planned" },
+    objective: "Ship integrations and social features that grow the network.",
+    scope: [
+      "Third‑party integrations",
+      "Advanced charting tools",
+      "Social trading features (follows, shared slates)",
+      "Governance mechanisms (proposal → vote flow MVP)",
     ],
+    links: [],
   },
 ];
-
-const StatusIcon = ({ status }: { status: string }) => {
-  if (status === "completed") {
-    return <Check className="w-4 h-4 text-success" />;
-  }
-  if (status === "in-progress") {
-    return <Clock className="w-4 h-4 text-orange-primary animate-pulse" />;
-  }
-  return <Circle className="w-4 h-4 text-text-muted" />;
-};
 
 const StatusBadge = ({ status }: { status: string }) => {
   const variants = {
     completed: "bg-success/20 text-success border-success/30",
-    "in-progress": "bg-orange-primary/20 text-orange-primary border-orange-primary/30",
+    "in-progress":
+      "bg-orange-primary/20 text-orange-primary border-orange-primary/30 animate-pulse",
     planned: "bg-text-muted/20 text-text-muted border-text-muted/30",
   };
 
   return (
     <Badge className={variants[status as keyof typeof variants]}>
-      {status === "in-progress" ? "In Progress" : status.charAt(0).toUpperCase() + status.slice(1)}
+      {status === "in-progress"
+        ? "In Progress"
+        : status.charAt(0).toUpperCase() + status.slice(1)}
     </Badge>
   );
 };
 
 export default function Roadmap() {
   return (
-    <div className="container mx-auto px-4 py-12">
-      {/* Header */}
+    <div className="container mx-auto px-4 py-12 overflow-hidden">
+      {/* Header with enhanced animation */}
+      <motion.div
+        initial={{ opacity: 0, y: 30 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.6, ease: "easeOut" }}
+        className="text-center mb-16"
+      >
+        <motion.h1
+          className="text-5xl md:text-6xl font-bold mb-4"
+          initial={{ opacity: 0, scale: 0.9 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 0.5, delay: 0.2 }}
+        >
+          Development <span className="text-gradient-primary">Roadmap</span>
+        </motion.h1>
+        <motion.p
+          className="text-text-secondary text-xl max-w-3xl mx-auto"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.5, delay: 0.4 }}
+        >
+          Our path from demo foundation to a full, real-time prediction market
+          ecosystem on Linera microchains.
+        </motion.p>
+      </motion.div>
+
+      {/* Program Schedule Summary with gradient background */}
+      <motion.div
+        initial={{ opacity: 0, scale: 0.95 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{ duration: 0.5, delay: 0.5 }}
+        className="mb-16"
+      >
+        <Card className="p-8 glass-surface relative overflow-hidden">
+          <div className="absolute inset-0 bg-gradient-to-br from-orange-primary/5 via-transparent to-purple-deep/5" />
+          <h2 className="text-2xl font-bold mb-6 text-center relative z-10">
+            Program Schedule
+          </h2>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 relative z-10">
+            {[
+              {
+                wave: "W1",
+                dates: "Oct 20–29",
+                title: "Foundation (Demo)",
+                active: true,
+              },
+              {
+                wave: "W2",
+                dates: "Nov 3–12",
+                title: "Core Markets",
+                active: false,
+              },
+              {
+                wave: "W3",
+                dates: "Nov 17–26",
+                title: "Advanced Features",
+                active: false,
+              },
+              {
+                wave: "W4",
+                dates: "Dec 1–10",
+                title: "Builder Tools",
+                active: false,
+              },
+              {
+                wave: "W5",
+                dates: "Dec 15–Jan 7",
+                title: "AI & Automation",
+                active: false,
+              },
+              {
+                wave: "W6",
+                dates: "Jan 12–21",
+                title: "Ecosystem",
+                active: false,
+              },
+            ].map((item, i) => (
+              <motion.div
+                key={i}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.4, delay: 0.6 + i * 0.1 }}
+                className={`text-center p-4 rounded-lg transition-all duration-300 ${
+                  item.active
+                    ? "bg-orange-primary/10 border border-orange-primary/30 scale-105"
+                    : "hover:bg-surface/50"
+                }`}
+              >
+                <div
+                  className={`font-bold text-lg mb-2 ${
+                    item.active ? "text-orange-primary" : "text-text-muted"
+                  }`}
+                >
+                  {item.wave}: {item.dates}
+                </div>
+                <div className="text-text-muted text-sm">{item.title}</div>
+              </motion.div>
+            ))}
+          </div>
+        </Card>
+      </motion.div>
+
+      {/* Status Legend with smooth fade */}
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="text-center mb-12"
+        transition={{ duration: 0.5, delay: 0.8 }}
+        className="mb-10 flex flex-wrap justify-center gap-8 text-sm"
       >
-        <h1 className="text-4xl md:text-5xl font-bold mb-3">
-          Development <span className="text-gradient-primary">Roadmap</span>
-        </h1>
-        <p className="text-text-secondary text-lg max-w-2xl mx-auto">
-          Our journey from foundation to full-featured prediction market ecosystem on Linera microchains.
-        </p>
+        <motion.div
+          className="flex items-center gap-2"
+          whileHover={{ scale: 1.05 }}
+          transition={{ type: "spring", stiffness: 300 }}
+        >
+          <Check className="w-4 h-4 text-success" />
+          <span className="text-text-muted">
+            Complete: Shipped and demo-ready
+          </span>
+        </motion.div>
+        <motion.div
+          className="flex items-center gap-2"
+          whileHover={{ scale: 1.05 }}
+          transition={{ type: "spring", stiffness: 300 }}
+        >
+          <Clock className="w-4 h-4 text-orange-primary animate-pulse" />
+          <span className="text-text-muted">In Progress: Actively building</span>
+        </motion.div>
+        <motion.div
+          className="flex items-center gap-2"
+          whileHover={{ scale: 1.05 }}
+          transition={{ type: "spring", stiffness: 300 }}
+        >
+          <Circle className="w-4 h-4 text-text-muted" />
+          <span className="text-text-muted">Planned: Future wave</span>
+        </motion.div>
       </motion.div>
 
-      {/* Timeline */}
-      <div className="relative">
-        {/* Vertical line (hidden on mobile) */}
-        <div className="hidden md:block absolute left-1/2 top-0 bottom-0 w-0.5 bg-gradient-to-b from-orange-primary via-blue-electric to-purple-deep" />
+      {/* Status as of Oct 25 */}
+      <motion.div
+        initial={{ opacity: 0, scale: 0.95 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{ duration: 0.5, delay: 0.9 }}
+        className="mb-16"
+      >
+        <Card className="p-6 glass-surface bg-amber-500/5 border-amber-500/30 relative overflow-hidden">
+          <div className="absolute inset-0 bg-gradient-to-r from-amber-500/10 to-transparent" />
+          <p className="text-center relative z-10">
+            <span className="font-semibold text-lg">Status as of Oct 25:</span>{" "}
+            <span className="text-orange-primary font-bold">
+              Wave 1: In Progress (build phase)
+            </span>
+            {" • "}
+            <span className="text-text-muted">Waves 2–6: Planned</span>
+          </p>
+        </Card>
+      </motion.div>
 
-        {/* Waves */}
-        <div className="space-y-12">
-          {waves.map((wave, index) => {
-            const isLeft = index % 2 === 0;
+      {/* Waves with improved animations */}
+      <div className="space-y-10">
+        {waves.map((wave, index) => (
+          <motion.div
+            key={wave.id}
+            initial={{ opacity: 0, x: index % 2 === 0 ? -50 : 50 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true, margin: "-100px" }}
+            transition={{ duration: 0.6, ease: "easeOut", delay: index * 0.1 }}
+          >
+            <motion.div
+              whileHover={{ scale: 1.02, y: -5 }}
+              transition={{ type: "spring", stiffness: 300, damping: 20 }}
+            >
+              <Card className="p-8 glass-surface relative overflow-hidden group">
+                {/* Gradient overlay on hover */}
+                <div className="absolute inset-0 bg-gradient-to-br from-orange-primary/0 via-transparent to-purple-deep/0 group-hover:from-orange-primary/5 group-hover:to-purple-deep/5 transition-all duration-500" />
 
-            return (
-              <motion.div
-                key={wave.id}
-                initial={{ opacity: 0, x: isLeft ? -50 : 50 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: index * 0.1 }}
-                className={`relative grid md:grid-cols-2 gap-8 ${isLeft ? "" : "md:flex-row-reverse"}`}
-              >
-                {/* Card */}
-                <div className={isLeft ? "md:pr-12" : "md:pl-12 md:col-start-2"}>
-                  <Card className="p-6 glass-surface">
-                    <div className="flex items-start justify-between mb-4">
-                      <div>
-                        <h3 className="text-2xl font-bold mb-1">Wave {wave.id}: {wave.title}</h3>
-                        <p className="text-text-muted text-sm">{wave.dateRange}</p>
-                      </div>
-                      <StatusBadge status={wave.status} />
-                    </div>
+                {/* Wave Header */}
+                <div className="flex flex-col md:flex-row md:items-start md:justify-between mb-8 gap-4 relative z-10">
+                  <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 0.4, delay: 0.2 }}
+                  >
+                    <h2 className="text-4xl font-bold mb-3">
+                      Wave {wave.id} — {wave.title}
+                    </h2>
+                    <p className="text-text-muted font-medium">
+                      Build: {wave.buildDates}
+                    </p>
+                  </motion.div>
+                  <motion.div
+                    initial={{ opacity: 0, scale: 0.8 }}
+                    whileInView={{ opacity: 1, scale: 1 }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 0.4, delay: 0.3 }}
+                  >
+                    <StatusBadge status={wave.status} />
+                  </motion.div>
+                </div>
 
-                    <ul className="space-y-3">
-                      {wave.features.map((feature, featureIndex) => (
-                        <motion.li
-                          key={featureIndex}
-                          initial={{ opacity: 0, x: -10 }}
-                          animate={{ opacity: 1, x: 0 }}
-                          transition={{ delay: (index * 0.1) + (featureIndex * 0.05) }}
-                          className="flex items-start gap-3"
-                        >
-                          <StatusIcon status={feature.status} />
-                          <span className="text-text-secondary">{feature.name}</span>
-                        </motion.li>
+                {/* Objective with icon animation */}
+                <motion.div
+                  className="mb-8 relative z-10"
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.4, delay: 0.3 }}
+                >
+                  <h3 className="text-xl font-semibold mb-3 flex items-center gap-3">
+                    <motion.div
+                      whileHover={{ rotate: 360, scale: 1.2 }}
+                      transition={{ duration: 0.5 }}
+                    >
+                      <Target className="w-6 h-6 text-orange-primary" />
+                    </motion.div>
+                    Objective
+                  </h3>
+                  <p className="text-text-secondary text-lg leading-relaxed">
+                    {wave.objective}
+                  </p>
+                </motion.div>
+
+                {/* Scope with staggered animation */}
+                <motion.div
+                  className="relative z-10"
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.4, delay: 0.4 }}
+                >
+                  <h3 className="text-xl font-semibold mb-4">
+                    What's included
+                  </h3>
+                  <ul className="space-y-3">
+                    {wave.scope.map((item, i) => (
+                      <motion.li
+                        key={i}
+                        initial={{ opacity: 0, x: -20 }}
+                        whileInView={{ opacity: 1, x: 0 }}
+                        viewport={{ once: true }}
+                        transition={{ duration: 0.3, delay: 0.5 + i * 0.05 }}
+                        className="flex items-start gap-3 text-text-secondary group/item"
+                      >
+                        <motion.div
+                          className="mt-2 w-2 h-2 rounded-full bg-orange-primary flex-shrink-0"
+                          whileHover={{ scale: 1.5 }}
+                          transition={{ type: "spring", stiffness: 500 }}
+                        />
+                        <span className="group-hover/item:text-text-primary transition-colors duration-200">
+                          {item}
+                        </span>
+                      </motion.li>
+                    ))}
+                  </ul>
+                </motion.div>
+
+                {/* Primary Links with smooth hover */}
+                {wave.links.length > 0 && (
+                  <motion.div
+                    className="pt-8 mt-8 border-t border-border/50 relative z-10"
+                    initial={{ opacity: 0, y: 20 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 0.4, delay: 0.6 }}
+                  >
+                    <h3 className="text-sm font-semibold mb-4 text-text-muted uppercase tracking-wider">
+                      Primary links
+                    </h3>
+                    <div className="flex flex-wrap gap-3">
+                      {wave.links.map((link, i) => (
+                        <Link key={i} to={link.to}>
+                          <motion.div
+                            whileHover={{ scale: 1.05, y: -2 }}
+                            whileTap={{ scale: 0.95 }}
+                            transition={{
+                              type: "spring",
+                              stiffness: 400,
+                              damping: 17,
+                            }}
+                          >
+                            <Badge className="bg-orange-primary/20 text-orange-primary border-orange-primary/30 hover:bg-orange-primary/30 transition-colors cursor-pointer px-4 py-2 text-sm font-medium">
+                              {link.label}
+                              <ArrowRight className="ml-2 w-4 h-4 inline" />
+                            </Badge>
+                          </motion.div>
+                        </Link>
                       ))}
-                    </ul>
-                  </Card>
-                </div>
-
-                {/* Timeline dot */}
-                <div className="hidden md:block absolute left-1/2 top-8 -translate-x-1/2">
-                  <div className={`w-4 h-4 rounded-full border-2 ${
-                    wave.status === "completed" 
-                      ? "bg-success border-success" 
-                      : wave.status === "in-progress"
-                      ? "bg-orange-primary border-orange-primary animate-pulse"
-                      : "bg-surface border-text-muted"
-                  }`} />
-                </div>
-              </motion.div>
-            );
-          })}
-        </div>
+                    </div>
+                  </motion.div>
+                )}
+              </Card>
+            </motion.div>
+          </motion.div>
+        ))}
       </div>
 
-      {/* Summary Stats */}
+      {/* Notes with smooth animation */}
       <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.8 }}
+        initial={{ opacity: 0, y: 30 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        transition={{ duration: 0.6 }}
         className="mt-16"
       >
-        <Card className="p-8 glass-surface">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
-            <div>
-              <div className="text-3xl font-bold text-success mb-2">
-                {waves.flatMap(w => w.features).filter(f => f.status === "completed").length}
-              </div>
-              <div className="text-sm text-text-muted">Completed</div>
-            </div>
-            <div>
-              <div className="text-3xl font-bold text-orange-primary mb-2">
-                {waves.flatMap(w => w.features).filter(f => f.status === "in-progress").length}
-              </div>
-              <div className="text-sm text-text-muted">In Progress</div>
-            </div>
-            <div>
-              <div className="text-3xl font-bold text-text-muted mb-2">
-                {waves.flatMap(w => w.features).filter(f => f.status === "planned").length}
-              </div>
-              <div className="text-sm text-text-muted">Planned</div>
-            </div>
-            <div>
-              <div className="text-3xl font-bold text-gradient-primary mb-2">
-                {Math.round((waves.flatMap(w => w.features).filter(f => f.status === "completed").length / waves.flatMap(w => w.features).length) * 100)}%
-              </div>
-              <div className="text-sm text-text-muted">Complete</div>
-            </div>
-          </div>
+        <Card className="p-8 glass-surface bg-blue-electric/5 border-blue-electric/30 relative overflow-hidden">
+          <div className="absolute inset-0 bg-gradient-to-br from-blue-electric/10 to-transparent" />
+          <h3 className="text-2xl font-semibold mb-4 relative z-10">Notes</h3>
+          <ul className="space-y-3 text-text-secondary relative z-10">
+            <motion.li
+              className="flex items-start gap-3"
+              initial={{ opacity: 0, x: -20 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.4, delay: 0.2 }}
+            >
+              <span className="text-blue-electric mt-1 text-lg">•</span>
+              <span>
+                Dates reflect build and evaluation windows for this program.
+                Deliverables may be refined as dependencies or testnet
+                conditions evolve.
+              </span>
+            </motion.li>
+            <motion.li
+              className="flex items-start gap-3"
+              initial={{ opacity: 0, x: -20 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.4, delay: 0.3 }}
+            >
+              <span className="text-blue-electric mt-1 text-lg">•</span>
+              <span>
+                Monetary allocations are for the program waves listed above.
+              </span>
+            </motion.li>
+          </ul>
         </Card>
       </motion.div>
 
-      {/* CTA */}
+      {/* CTA with enhanced animation */}
       <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.9 }}
-        className="mt-12 text-center"
+        initial={{ opacity: 0, y: 30 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        transition={{ duration: 0.6 }}
+        className="mt-16"
       >
-        <Card className="p-8 glass-surface">
-          <h3 className="text-2xl font-bold mb-3">Want to influence our roadmap?</h3>
-          <p className="text-text-secondary mb-6">
-            Join our community and share your ideas for features you'd like to see.
-          </p>
-          <div className="flex gap-4 justify-center">
-            <a href="#" className="text-orange-primary hover:text-orange-secondary transition-colors">
-              Discord
-            </a>
-            <span className="text-text-muted">•</span>
-            <a href="#" className="text-orange-primary hover:text-orange-secondary transition-colors">
-              Twitter
-            </a>
-            <span className="text-text-muted">•</span>
-            <a href="#" className="text-orange-primary hover:text-orange-secondary transition-colors">
-              GitHub Discussions
-            </a>
-          </div>
-        </Card>
+        <motion.div
+          whileHover={{ scale: 1.02 }}
+          transition={{ type: "spring", stiffness: 300 }}
+        >
+          <Card className="p-10 glass-surface text-center relative overflow-hidden">
+            <div className="absolute inset-0 bg-gradient-to-r from-orange-primary/10 via-purple-deep/10 to-blue-electric/10" />
+            <h3 className="text-3xl font-bold mb-4 relative z-10">
+              Want to influence our roadmap?
+            </h3>
+            <p className="text-text-secondary text-lg mb-8 relative z-10">
+              Join our community and share your ideas for features you'd like to
+              see.
+            </p>
+            <div className="flex gap-6 justify-center relative z-10">
+              <motion.a
+                href="#"
+                className="text-orange-primary hover:text-orange-secondary transition-colors font-medium"
+                whileHover={{ scale: 1.1, y: -2 }}
+                transition={{ type: "spring", stiffness: 400 }}
+              >
+                Discord
+              </motion.a>
+              <span className="text-text-muted">•</span>
+              <motion.a
+                href="#"
+                className="text-orange-primary hover:text-orange-secondary transition-colors font-medium"
+                whileHover={{ scale: 1.1, y: -2 }}
+                transition={{ type: "spring", stiffness: 400 }}
+              >
+                Twitter
+              </motion.a>
+              <span className="text-text-muted">•</span>
+              <motion.a
+                href="#"
+                className="text-orange-primary hover:text-orange-secondary transition-colors font-medium"
+                whileHover={{ scale: 1.1, y: -2 }}
+                transition={{ type: "spring", stiffness: 400 }}
+              >
+                GitHub Discussions
+              </motion.a>
+            </div>
+          </Card>
+        </motion.div>
       </motion.div>
     </div>
   );

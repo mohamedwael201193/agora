@@ -1,45 +1,48 @@
-import { useState } from "react";
+import foundryPreview from "@/assets/foundry-preview.jpg";
+import { AnimatedIcon } from "@/components/ui/AnimatedIcon";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { 
-  Hammer, 
-  Plus, 
-  Code, 
-  Rocket, 
-  BarChart3, 
-  Target, 
-  TrendingUp, 
-  Timer, 
-  HelpCircle, 
-  Dices, 
-  Eye, 
-  Clock, 
-  ScrollText,
-  Palette,
-  Zap,
-  Plug,
-  Lightbulb,
-  DollarSign,
-  LineChart,
-  RefreshCw
-} from "lucide-react";
-import { motion, AnimatePresence } from "framer-motion";
-import foundryPreview from "@/assets/foundry-preview.jpg";
+import { useToast } from "@/hooks/use-toast";
 import {
+  closestCenter,
   DndContext,
   DragEndEvent,
   DragOverlay,
   DragStartEvent,
   PointerSensor,
+  useDraggable,
+  useDroppable,
   useSensor,
   useSensors,
-  closestCenter,
 } from "@dnd-kit/core";
-import { AnimatedIcon } from "@/components/ui/AnimatedIcon";
-import { useToast } from "@/hooks/use-toast";
+import { AnimatePresence, motion } from "framer-motion";
+import {
+  BarChart3,
+  Clock,
+  Code,
+  Dices,
+  DollarSign,
+  Eye,
+  Hammer,
+  HelpCircle,
+  Lightbulb,
+  LineChart,
+  Palette,
+  Plug,
+  Plus,
+  RefreshCw,
+  Rocket,
+  ScrollText,
+  Target,
+  Timer,
+  TrendingUp,
+  X,
+  Zap,
+} from "lucide-react";
+import { useState } from "react";
 
 const templates = [
   {
@@ -73,14 +76,34 @@ const templates = [
 ];
 
 const components = [
-  { id: "question", label: "Question Block", icon: HelpCircle, color: "orange" },
+  {
+    id: "question",
+    label: "Question Block",
+    icon: HelpCircle,
+    color: "orange",
+  },
   { id: "outcomes", label: "Outcome Options", icon: Dices, color: "blue" },
   { id: "oracle", label: "Oracle Connection", icon: Eye, color: "purple" },
   { id: "timebound", label: "Time Bounds", icon: Clock, color: "cyan" },
-  { id: "rules", label: "Participation Rules", icon: ScrollText, color: "orange" },
+  {
+    id: "rules",
+    label: "Participation Rules",
+    icon: ScrollText,
+    color: "orange",
+  },
   { id: "pricing", label: "Fee Structure", icon: DollarSign, color: "blue" },
-  { id: "liquidity", label: "Liquidity Pool", icon: LineChart, color: "purple" },
-  { id: "resolution", label: "Resolution Logic", icon: RefreshCw, color: "cyan" },
+  {
+    id: "liquidity",
+    label: "Liquidity Pool",
+    icon: LineChart,
+    color: "purple",
+  },
+  {
+    id: "resolution",
+    label: "Resolution Logic",
+    icon: RefreshCw,
+    color: "cyan",
+  },
 ];
 
 interface DroppedComponent {
@@ -91,10 +114,78 @@ interface DroppedComponent {
   color: string;
 }
 
+// Draggable Component Item
+function DraggableComponent({
+  component,
+}: {
+  component: (typeof components)[0];
+}) {
+  const { attributes, listeners, setNodeRef, isDragging } = useDraggable({
+    id: component.id,
+  });
+
+  const colorMap: Record<string, string> = {
+    orange: "orange-primary",
+    blue: "blue-electric",
+    purple: "purple-deep",
+    cyan: "cyan-bright",
+  };
+
+  const bgColor = colorMap[component.color] || "orange-primary";
+
+  return (
+    <motion.div
+      ref={setNodeRef}
+      {...listeners}
+      {...attributes}
+      whileHover={{ scale: isDragging ? 1 : 1.05 }}
+      whileTap={{ scale: 0.95 }}
+      className={`p-4 bg-surface-elevated rounded-lg border border-border hover:border-orange-primary/50 transition-all text-center cursor-move ${
+        isDragging ? "opacity-50" : ""
+      }`}
+    >
+      <div
+        className={`w-12 h-12 rounded-lg bg-${bgColor}/20 flex items-center justify-center mx-auto mb-2`}
+      >
+        <component.icon className={`w-6 h-6 text-${bgColor}`} />
+      </div>
+      <div className="text-sm font-medium">{component.label}</div>
+    </motion.div>
+  );
+}
+
+// Droppable Canvas Area
+function DroppableCanvas({
+  children,
+  isOver,
+}: {
+  children: React.ReactNode;
+  isOver: boolean;
+}) {
+  const { setNodeRef } = useDroppable({
+    id: "canvas",
+  });
+
+  return (
+    <div
+      ref={setNodeRef}
+      className={`min-h-[400px] bg-surface-elevated rounded-lg border-2 transition-all ${
+        isOver
+          ? "border-orange-primary border-dashed bg-orange-primary/5"
+          : "border-dashed border-border"
+      }`}
+    >
+      {children}
+    </div>
+  );
+}
+
 export default function FoundryBuilder() {
   const [marketName, setMarketName] = useState("");
   const [selectedTemplate, setSelectedTemplate] = useState<number | null>(null);
-  const [droppedComponents, setDroppedComponents] = useState<DroppedComponent[]>([]);
+  const [droppedComponents, setDroppedComponents] = useState<
+    DroppedComponent[]
+  >([]);
   const [activeId, setActiveId] = useState<string | null>(null);
   const [isDeploying, setIsDeploying] = useState(false);
   const { toast } = useToast();
@@ -127,8 +218,8 @@ export default function FoundryBuilder() {
         };
         setDroppedComponents((prev) => [...prev, newComponent]);
         toast({
-          title: "Component Added",
-          description: `${component.label} added to canvas`,
+          title: "Component Added ✓",
+          description: `${component.label} added to your market canvas`,
         });
       }
     }
@@ -149,19 +240,23 @@ export default function FoundryBuilder() {
     }
 
     setIsDeploying(true);
-    
-    // Simulate deployment with realistic latency
-    await new Promise((resolve) => setTimeout(resolve, 1500));
-    
+
+    // Simulate realistic deployment process
+    await new Promise((resolve) => setTimeout(resolve, 1800));
+
     toast({
-      title: "Market Deployed!",
-      description: `"${marketName}" is now live on the marketplace`,
+      title: "🚀 Market Deployed Successfully!",
+      description: `"${marketName}" is now live on the Agora marketplace`,
     });
-    
+
     setIsDeploying(false);
-    setMarketName("");
-    setDroppedComponents([]);
-    setSelectedTemplate(null);
+
+    // Reset form after successful deployment
+    setTimeout(() => {
+      setMarketName("");
+      setDroppedComponents([]);
+      setSelectedTemplate(null);
+    }, 500);
   };
 
   const isConfigValid = marketName.length > 0 && droppedComponents.length > 0;
@@ -186,15 +281,22 @@ export default function FoundryBuilder() {
         >
           <div className="text-center mb-8">
             <Badge className="mb-4 bg-orange-primary/20 text-orange-primary border-orange-primary/30">
-              <AnimatedIcon icon={Hammer} animation="bounce" trigger="hover" color="orange" size={12} className="mr-1" />
+              <AnimatedIcon
+                icon={Hammer}
+                animation="bounce"
+                trigger="hover"
+                color="orange"
+                size={12}
+                className="mr-1"
+              />
               No-Code Builder
             </Badge>
             <h1 className="text-4xl md:text-5xl font-bold mb-3">
               Market <span className="text-gradient-primary">Foundry</span>
             </h1>
             <p className="text-text-secondary text-lg max-w-2xl mx-auto">
-              Drag-and-drop market builder. Create custom prediction markets in minutes 
-              with zero coding required.
+              Drag-and-drop market builder. Create custom prediction markets in
+              minutes with zero coding required.
             </p>
           </div>
 
@@ -205,9 +307,9 @@ export default function FoundryBuilder() {
             transition={{ delay: 0.1 }}
             className="relative h-80 rounded-xl overflow-hidden mb-8"
           >
-            <img 
-              src={foundryPreview} 
-              alt="Drag and drop market builder interface with component palette" 
+            <img
+              src={foundryPreview}
+              alt="Drag and drop market builder interface with component palette"
               className="w-full h-full object-cover"
             />
             <div className="absolute inset-0 bg-gradient-to-t from-bg-primary via-bg-primary/50 to-transparent" />
@@ -243,14 +345,18 @@ export default function FoundryBuilder() {
                       </div>
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center gap-2 mb-1">
-                          <h4 className="font-semibold text-sm">{template.name}</h4>
+                          <h4 className="font-semibold text-sm">
+                            {template.name}
+                          </h4>
                           {template.popular && (
                             <Badge className="text-xs bg-orange-primary/20 text-orange-primary border-orange-primary/30">
                               Popular
                             </Badge>
                           )}
                         </div>
-                        <p className="text-xs text-text-muted">{template.description}</p>
+                        <p className="text-xs text-text-muted">
+                          {template.description}
+                        </p>
                       </div>
                     </div>
                   </motion.button>
@@ -300,26 +406,16 @@ export default function FoundryBuilder() {
 
             {/* Component Palette */}
             <Card className="p-6 glass-surface">
-              <h3 className="font-semibold mb-4">
-                Market Components
-                <span className="text-sm text-text-muted font-normal ml-2">
-                  (Drag to canvas below)
-                </span>
-              </h3>
+              <h3 className="font-semibold mb-2">Market Components</h3>
+              <p className="text-sm text-text-muted mb-4">
+                Drag components to the canvas below to build your market
+              </p>
               <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
                 {components.map((component) => (
-                  <motion.div
+                  <DraggableComponent
                     key={component.id}
-                    draggable
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
-                    className="p-4 bg-surface-elevated rounded-lg border border-border hover:border-orange-primary/50 transition-all text-center cursor-move"
-                  >
-                    <div className={`w-12 h-12 rounded-lg bg-${component.color === "orange" ? "orange-primary" : component.color === "blue" ? "blue-electric" : component.color === "purple" ? "purple-deep" : "cyan-bright"}/20 flex items-center justify-center mx-auto mb-2`}>
-                      <component.icon className={`w-6 h-6 text-${component.color === "orange" ? "orange-primary" : component.color === "blue" ? "blue-electric" : component.color === "purple" ? "purple-deep" : "cyan-bright"}`} />
-                    </div>
-                    <div className="text-sm font-medium">{component.label}</div>
-                  </motion.div>
+                    component={component}
+                  />
                 ))}
               </div>
             </Card>
@@ -334,77 +430,71 @@ export default function FoundryBuilder() {
                 </Button>
               </div>
 
-              <div
-                id="canvas"
-                onDragOver={(e) => e.preventDefault()}
-                onDrop={(e) => {
-                  e.preventDefault();
-                  if (activeId) {
-                    const component = components.find((c) => c.id === activeId);
-                    if (component) {
-                      const newComponent: DroppedComponent = {
-                        id: `${component.id}-${Date.now()}`,
-                        componentId: component.id,
-                        label: component.label,
-                        icon: component.icon,
-                        color: component.color,
-                      };
-                      setDroppedComponents((prev) => [...prev, newComponent]);
-                      toast({
-                        title: "Component Added",
-                        description: `${component.label} added to canvas`,
-                      });
-                    }
-                  }
-                  setActiveId(null);
-                }}
-                className={`min-h-[400px] bg-surface-elevated rounded-lg border-2 transition-all ${
-                  activeId
-                    ? "border-orange-primary border-dashed bg-orange-primary/5"
-                    : "border-dashed border-border"
-                }`}
-              >
+              <DroppableCanvas isOver={!!activeId}>
                 {droppedComponents.length === 0 ? (
-                  <div className="h-full flex items-center justify-center">
+                  <div className="h-[400px] flex items-center justify-center">
                     <div className="text-center text-text-muted">
-                      <Plus className="w-12 h-12 mx-auto mb-3 opacity-50" />
-                      <p>Drag components here to build your market</p>
-                      <p className="text-sm mt-2">Or select a template to get started</p>
+                      <Plus className="w-16 h-16 mx-auto mb-4 opacity-30" />
+                      <p className="text-lg font-medium mb-2">
+                        Drag components here to build your market
+                      </p>
+                      <p className="text-sm">
+                        Or select a template to get started
+                      </p>
                     </div>
                   </div>
                 ) : (
                   <div className="p-4 space-y-3">
                     <AnimatePresence>
-                      {droppedComponents.map((component, index) => (
-                        <motion.div
-                          key={component.id}
-                          initial={{ opacity: 0, y: 20 }}
-                          animate={{ opacity: 1, y: 0 }}
-                          exit={{ opacity: 0, x: -100 }}
-                          transition={{ delay: index * 0.05 }}
-                          className="p-4 bg-surface rounded-lg border border-border hover:border-orange-primary/50 transition-all flex items-center gap-4 group"
-                        >
-                          <div className={`w-10 h-10 rounded-lg bg-${component.color === "orange" ? "orange-primary" : component.color === "blue" ? "blue-electric" : component.color === "purple" ? "purple-deep" : "cyan-bright"}/20 flex items-center justify-center flex-shrink-0`}>
-                            <component.icon className={`w-5 h-5 text-${component.color === "orange" ? "orange-primary" : component.color === "blue" ? "blue-electric" : component.color === "purple" ? "purple-deep" : "cyan-bright"}`} />
-                          </div>
-                          <div className="flex-1">
-                            <h4 className="font-semibold text-sm">{component.label}</h4>
-                            <p className="text-xs text-text-muted">Component #{index + 1}</p>
-                          </div>
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            onClick={() => removeComponent(component.id)}
-                            className="opacity-0 group-hover:opacity-100 transition-opacity"
+                      {droppedComponents.map((component, index) => {
+                        const colorMap: Record<string, string> = {
+                          orange: "orange-primary",
+                          blue: "blue-electric",
+                          purple: "purple-deep",
+                          cyan: "cyan-bright",
+                        };
+                        const bgColor =
+                          colorMap[component.color] || "orange-primary";
+
+                        return (
+                          <motion.div
+                            key={component.id}
+                            initial={{ opacity: 0, y: 20, scale: 0.95 }}
+                            animate={{ opacity: 1, y: 0, scale: 1 }}
+                            exit={{ opacity: 0, x: -100, scale: 0.9 }}
+                            transition={{ delay: index * 0.05 }}
+                            className="p-4 bg-surface rounded-lg border border-border hover:border-orange-primary/50 transition-all flex items-center gap-4 group"
                           >
-                            Remove
-                          </Button>
-                        </motion.div>
-                      ))}
+                            <div
+                              className={`w-10 h-10 rounded-lg bg-${bgColor}/20 flex items-center justify-center flex-shrink-0`}
+                            >
+                              <component.icon
+                                className={`w-5 h-5 text-${bgColor}`}
+                              />
+                            </div>
+                            <div className="flex-1">
+                              <h4 className="font-semibold text-sm">
+                                {component.label}
+                              </h4>
+                              <p className="text-xs text-text-muted">
+                                Component #{index + 1} • Configured
+                              </p>
+                            </div>
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => removeComponent(component.id)}
+                              className="opacity-0 group-hover:opacity-100 transition-opacity hover:bg-destructive/10 hover:text-destructive"
+                            >
+                              <X className="w-4 h-4" />
+                            </Button>
+                          </motion.div>
+                        );
+                      })}
                     </AnimatePresence>
                   </div>
                 )}
-              </div>
+              </DroppableCanvas>
             </Card>
 
             {/* Actions */}
@@ -419,7 +509,13 @@ export default function FoundryBuilder() {
               >
                 {isDeploying ? (
                   <>
-                    <AnimatedIcon icon={RefreshCw} animation="spin" trigger="always" size={16} className="mr-2" />
+                    <AnimatedIcon
+                      icon={RefreshCw}
+                      animation="spin"
+                      trigger="always"
+                      size={16}
+                      className="mr-2"
+                    />
                     Deploying...
                   </>
                 ) : (
@@ -444,31 +540,51 @@ export default function FoundryBuilder() {
             <div className="grid md:grid-cols-4 gap-6">
               <div className="text-center">
                 <div className="w-16 h-16 rounded-full bg-orange-primary/20 flex items-center justify-center mx-auto mb-3">
-                  <AnimatedIcon icon={Palette} animation="pulse" trigger="hover" color="orange" size={32} />
+                  <AnimatedIcon
+                    icon={Palette}
+                    animation="pulse"
+                    trigger="hover"
+                    color="orange"
+                    size={32}
+                  />
                 </div>
                 <h4 className="font-semibold mb-2">Visual Builder</h4>
-                <p className="text-sm text-text-muted">Intuitive drag-and-drop interface</p>
+                <p className="text-sm text-text-muted">
+                  Intuitive drag-and-drop interface
+                </p>
               </div>
               <div className="text-center">
                 <div className="w-16 h-16 rounded-full bg-blue-electric/20 flex items-center justify-center mx-auto mb-3">
-                  <AnimatedIcon icon={Zap} animation="glow" trigger="hover" color="blue" size={32} />
+                  <AnimatedIcon
+                    icon={Zap}
+                    animation="glow"
+                    trigger="hover"
+                    color="blue"
+                    size={32}
+                  />
                 </div>
                 <h4 className="font-semibold mb-2">Instant Deploy</h4>
-                <p className="text-sm text-text-muted">One-click market launch</p>
+                <p className="text-sm text-text-muted">
+                  One-click market launch
+                </p>
               </div>
               <div className="text-center">
                 <div className="w-16 h-16 rounded-full bg-purple-deep/20 flex items-center justify-center mx-auto mb-3">
                   <Plug className="w-8 h-8 text-purple-deep" />
                 </div>
                 <h4 className="font-semibold mb-2">Oracle Integration</h4>
-                <p className="text-sm text-text-muted">Connect external data sources</p>
+                <p className="text-sm text-text-muted">
+                  Connect external data sources
+                </p>
               </div>
               <div className="text-center">
                 <div className="w-16 h-16 rounded-full bg-cyan-bright/20 flex items-center justify-center mx-auto mb-3">
                   <Lightbulb className="w-8 h-8 text-cyan-bright" />
                 </div>
                 <h4 className="font-semibold mb-2">Smart Templates</h4>
-                <p className="text-sm text-text-muted">Pre-built market types</p>
+                <p className="text-sm text-text-muted">
+                  Pre-built market types
+                </p>
               </div>
             </div>
           </Card>
@@ -478,10 +594,32 @@ export default function FoundryBuilder() {
         <DragOverlay>
           {activeDragComponent && (
             <div className="p-4 bg-surface-elevated rounded-lg border-2 border-orange-primary shadow-2xl cursor-move">
-              <div className={`w-12 h-12 rounded-lg bg-${activeDragComponent.color === "orange" ? "orange-primary" : activeDragComponent.color === "blue" ? "blue-electric" : activeDragComponent.color === "purple" ? "purple-deep" : "cyan-bright"}/20 flex items-center justify-center mx-auto mb-2`}>
-                <activeDragComponent.icon className={`w-6 h-6 text-${activeDragComponent.color === "orange" ? "orange-primary" : activeDragComponent.color === "blue" ? "blue-electric" : activeDragComponent.color === "purple" ? "purple-deep" : "cyan-bright"}`} />
+              <div
+                className={`w-12 h-12 rounded-lg bg-${
+                  activeDragComponent.color === "orange"
+                    ? "orange-primary"
+                    : activeDragComponent.color === "blue"
+                    ? "blue-electric"
+                    : activeDragComponent.color === "purple"
+                    ? "purple-deep"
+                    : "cyan-bright"
+                }/20 flex items-center justify-center mx-auto mb-2`}
+              >
+                <activeDragComponent.icon
+                  className={`w-6 h-6 text-${
+                    activeDragComponent.color === "orange"
+                      ? "orange-primary"
+                      : activeDragComponent.color === "blue"
+                      ? "blue-electric"
+                      : activeDragComponent.color === "purple"
+                      ? "purple-deep"
+                      : "cyan-bright"
+                  }`}
+                />
               </div>
-              <div className="text-sm font-medium text-center">{activeDragComponent.label}</div>
+              <div className="text-sm font-medium text-center">
+                {activeDragComponent.label}
+              </div>
             </div>
           )}
         </DragOverlay>

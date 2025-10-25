@@ -61,6 +61,13 @@ export default function Confidence() {
   const [predictedSide, setPredictedSide] = useState<"YES" | "NO" | null>(null);
   const [showAchievement, setShowAchievement] = useState(false);
 
+  // Store final game results for display after currentGame is cleared
+  const [finalPercentileScore, setFinalPercentileScore] = useState(0);
+  const [finalBadge, setFinalBadge] = useState<
+    "bronze" | "silver" | "gold" | "platinum" | "none"
+  >("none");
+  const [finalRounds, setFinalRounds] = useState<any[]>([]);
+
   // Calculate running average Brier score
   const runningAverage = currentGame
     ? currentGame.rounds.reduce((sum, r) => sum + r.brierScore, 0) /
@@ -78,6 +85,9 @@ export default function Confidence() {
     setCurrentOutcome(null);
     setCurrentBrierScore(null);
     setPredictedSide(null);
+    setFinalPercentileScore(0);
+    setFinalBadge("none");
+    setFinalRounds([]);
   };
 
   // Handle submitting prediction
@@ -103,12 +113,17 @@ export default function Confidence() {
     if (!currentGame) return;
 
     if (currentGame.rounds.length >= TOTAL_ROUNDS) {
-      // Game complete
+      // Game complete - calculate and store final results before finishing
       const finalAvg =
         currentGame.rounds.reduce((sum, r) => sum + r.brierScore, 0) /
         currentGame.rounds.length;
       const finalPercentile = (1 - finalAvg) * 100;
       const badge = calculateBadge(finalPercentile);
+
+      // Store final results in component state before clearing currentGame
+      setFinalPercentileScore(finalPercentile);
+      setFinalBadge(badge);
+      setFinalRounds(currentGame.rounds);
 
       finishGame(finalAvg, finalPercentile, badge);
       setPhase("complete");
@@ -176,9 +191,9 @@ export default function Confidence() {
         )}
         {phase === "complete" && (
           <>
-            Game complete! Final percentile score: {percentileScore.toFixed(1)}{" "}
-            percent. Badge earned:{" "}
-            {getBadgeInfo(calculateBadge(percentileScore)).name}.
+            Game complete! Final percentile score:{" "}
+            {finalPercentileScore.toFixed(1)} percent. Badge earned:{" "}
+            {getBadgeInfo(finalBadge).name}.
           </>
         )}
       </div>
@@ -525,7 +540,7 @@ export default function Confidence() {
           )}
 
         {/* Complete Phase */}
-        {phase === "complete" && !currentGame && (
+        {phase === "complete" && (
           <motion.div key="complete" {...fadeIn}>
             <Card>
               <CardHeader>
@@ -542,16 +557,15 @@ export default function Confidence() {
                     aria-hidden="true"
                   />
                   <div className="text-6xl font-bold text-primary mb-2">
-                    {percentileScore.toFixed(1)}%
+                    {finalPercentileScore.toFixed(1)}%
                   </div>
                   <div className="text-muted-foreground">Percentile Score</div>
                 </div>
 
                 {/* Badge Display */}
                 {(() => {
-                  const badge = calculateBadge(percentileScore);
-                  const badgeInfo = getBadgeInfo(badge);
-                  return badge !== "none" ? (
+                  const badgeInfo = getBadgeInfo(finalBadge);
+                  return finalBadge !== "none" ? (
                     <motion.div
                       className="p-6 rounded-lg text-center"
                       style={{ background: badgeInfo.gradient }}
@@ -565,7 +579,7 @@ export default function Confidence() {
                       <div
                         className="text-4xl mb-2"
                         role="img"
-                        aria-label={`${badge} badge`}
+                        aria-label={`${finalBadge} badge`}
                       >
                         {badgeInfo.emoji}
                       </div>
@@ -580,11 +594,11 @@ export default function Confidence() {
                 })()}
 
                 {/* Calibration Advice */}
-                {currentGame && (
+                {finalRounds.length > 0 && (
                   <div className="p-4 bg-muted rounded-lg space-y-2">
                     <h3 className="font-semibold flex items-center gap-2">
                       {(() => {
-                        const advice = getCalibrationAdvice(currentGame.rounds);
+                        const advice = getCalibrationAdvice(finalRounds);
                         return advice.trend === "over" ? (
                           <>
                             <TrendingUp
@@ -610,7 +624,7 @@ export default function Confidence() {
                       })()}
                     </h3>
                     <p className="text-sm text-muted-foreground">
-                      {getCalibrationAdvice(currentGame.rounds).advice}
+                      {getCalibrationAdvice(finalRounds).advice}
                     </p>
                   </div>
                 )}
@@ -639,9 +653,8 @@ export default function Confidence() {
             </DialogDescription>
           </DialogHeader>
           {(() => {
-            const badge = calculateBadge(percentileScore);
-            const badgeInfo = getBadgeInfo(badge);
-            return badge !== "none" ? (
+            const badgeInfo = getBadgeInfo(finalBadge);
+            return finalBadge !== "none" ? (
               <div className="text-center py-6">
                 <motion.div
                   className="text-6xl mb-4"
@@ -652,7 +665,7 @@ export default function Confidence() {
                   animate={{ scale: 1, rotate: 0 }}
                   transition={{ type: "spring", bounce: 0.6 }}
                   role="img"
-                  aria-label={`${badge} badge earned`}
+                  aria-label={`${finalBadge} badge earned`}
                 >
                   {badgeInfo.emoji}
                 </motion.div>
@@ -663,7 +676,7 @@ export default function Confidence() {
                   {badgeInfo.description}
                 </p>
                 <div className="text-4xl font-bold text-primary">
-                  {percentileScore.toFixed(1)}%
+                  {finalPercentileScore.toFixed(1)}%
                 </div>
               </div>
             ) : null;

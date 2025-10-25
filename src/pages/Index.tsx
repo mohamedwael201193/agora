@@ -1,10 +1,11 @@
+import heroBackground from "@/assets/hero-bg.jpg";
+import { StatChip } from "@/components/common/StatChip";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { ArrowRight, Zap, Shield, Clock, Network } from "lucide-react";
 import { motion } from "framer-motion";
+import { ArrowRight, Clock, Network, Shield, Target, Zap } from "lucide-react";
 import { Link } from "react-router-dom";
-import heroBackground from "@/assets/hero-bg.jpg";
 
 export default function Index() {
   return (
@@ -13,9 +14,9 @@ export default function Index() {
       <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
         {/* Animated Background */}
         <div className="absolute inset-0 z-0">
-          <img 
-            src={heroBackground} 
-            alt="Abstract microchain network with flowing particles" 
+          <img
+            src={heroBackground}
+            alt="Abstract microchain network with flowing particles"
             className="w-full h-full object-cover opacity-40"
           />
           <div className="absolute inset-0 bg-gradient-to-b from-bg-primary/50 via-bg-primary/80 to-bg-primary" />
@@ -51,8 +52,8 @@ export default function Index() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8 }}
           >
-            <Badge className="mb-6 bg-orange-primary/20 text-orange-primary border-orange-primary/30 text-base px-4 py-2">
-              Conway Testnet Now Live
+            <Badge className="mb-6 bg-amber-500/20 text-amber-400 border-amber-500/30 text-base px-4 py-2">
+              Wave 1 Demo
             </Badge>
 
             <h1 className="text-5xl md:text-7xl font-bold mb-6">
@@ -61,33 +62,39 @@ export default function Index() {
               <span className="text-gradient-primary">Be real-time.</span>
             </h1>
 
-            <p className="text-xl md:text-2xl text-text-secondary mb-8 max-w-3xl mx-auto">
-              Build prediction markets, games, and agentic apps on Linera microchains 
-              with sub-second finality.
+            <p className="text-xl md:text-2xl text-text-secondary mb-4 max-w-3xl mx-auto">
+              Build prediction markets, games, and agentic apps on Linera
+              microchains with sub-second finality.
             </p>
 
-            {/* Metrics Strip */}
+            <p className="text-base text-text-muted mb-8 max-w-2xl mx-auto">
+              This Wave 1 demo uses simulated data to showcase the user
+              experience. No on‑chain state is created. Testnet integration
+              launches in Wave 2.
+            </p>
+
+            {/* Stats Strip with Tooltips */}
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.3 }}
-              className="flex flex-wrap justify-center gap-8 mb-12 text-sm"
+              className="flex flex-wrap justify-center gap-6 mb-12"
             >
-              <div className="flex items-center gap-2">
-                <Zap className="w-5 h-5 text-orange-primary" />
-                <span className="text-text-muted">Block Finality</span>
-                <span className="font-bold">{"<"}300ms</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <Shield className="w-5 h-5 text-blue-electric" />
-                <span className="text-text-muted">Trustless</span>
-                <span className="font-bold">Browser Client</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <Network className="w-5 h-5 text-purple-deep" />
-                <span className="text-text-muted">Native</span>
-                <span className="font-bold">Push Notifications</span>
-              </div>
+              <StatChip
+                icon={Clock}
+                label="Target block finality: <300 ms"
+                tooltip="Simulated in Wave 1. Real block times will be measured on testnet in Wave 2."
+              />
+              <StatChip
+                icon={Shield}
+                label="Browser light client: Planned"
+                tooltip="Wave 3+ will enable trustless browser-based chain verification."
+              />
+              <StatChip
+                icon={Network}
+                label="Push notifications: Planned"
+                tooltip="Wave 4+ will deliver native GraphQL subscriptions for real-time updates."
+              />
             </motion.div>
 
             {/* CTAs */}
@@ -97,31 +104,31 @@ export default function Index() {
               transition={{ delay: 0.5 }}
               className="flex flex-col sm:flex-row gap-4 justify-center"
             >
-              <Link to="/marketplace">
-                <Button 
-                  size="lg" 
+              <Link to="/game/confidence">
+                <Button
+                  size="lg"
                   className="bg-gradient-to-r from-orange-primary to-orange-secondary hover:opacity-90 text-lg px-8"
                 >
-                  Launch Marketplace
-                  <ArrowRight className="ml-2 w-5 h-5" />
+                  Try Confidence Flip
+                  <Target className="ml-2 w-5 h-5" />
                 </Button>
               </Link>
-              <Link to="/chrono-echoes">
-                <Button 
-                  size="lg" 
-                  variant="outline"
-                  className="border-orange-primary/50 text-orange-primary hover:bg-orange-primary/10 text-lg px-8"
-                >
-                  Try Chrono-Echoes
-                </Button>
-              </Link>
-              <Link to="/foundry">
-                <Button 
-                  size="lg" 
+              <Link to="/architecture">
+                <Button
+                  size="lg"
                   variant="outline"
                   className="border-blue-electric/50 text-blue-electric hover:bg-blue-electric/10 text-lg px-8"
                 >
-                  Build with Foundry
+                  View Architecture
+                </Button>
+              </Link>
+              <Link to="/roadmap">
+                <Button
+                  size="lg"
+                  variant="outline"
+                  className="border-purple-deep/50 text-purple-deep hover:bg-purple-deep/10 text-lg px-8"
+                >
+                  See Roadmap
                 </Button>
               </Link>
             </motion.div>
@@ -145,7 +152,7 @@ export default function Index() {
           </p>
         </motion.div>
 
-        <div className="grid md:grid-cols-3 gap-8">
+        <div className="grid md:grid-cols-3 gap-8 mb-12">
           {/* Pillar 1 */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -157,10 +164,13 @@ export default function Index() {
               <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-orange-primary to-orange-secondary flex items-center justify-center mb-6 mx-auto">
                 <Zap className="w-8 h-8 text-white" />
               </div>
-              <h3 className="text-2xl font-bold mb-4 text-center">Predictable Performance</h3>
+              <h3 className="text-2xl font-bold mb-4 text-center">
+                Predictable Performance
+              </h3>
               <p className="text-text-secondary text-center">
-                No gas wars, no front-running. Elastic microchain scaling ensures consistent 
-                sub-second finality regardless of network congestion.
+                No gas wars, no front-running. Elastic microchain scaling
+                ensures consistent sub-second finality regardless of network
+                congestion.
               </p>
             </Card>
           </motion.div>
@@ -176,10 +186,12 @@ export default function Index() {
               <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-blue-electric to-cyan-bright flex items-center justify-center mb-6 mx-auto">
                 <Network className="w-8 h-8 text-white" />
               </div>
-              <h3 className="text-2xl font-bold mb-4 text-center">Agentic Integration</h3>
+              <h3 className="text-2xl font-bold mb-4 text-center">
+                Agentic Integration
+              </h3>
               <p className="text-text-secondary text-center">
-                AI agents transact directly via MCP and GraphQL. Build autonomous prediction 
-                systems that operate 24/7.
+                AI agents transact directly via MCP and GraphQL. Build
+                autonomous prediction systems that operate 24/7.
               </p>
             </Card>
           </motion.div>
@@ -195,14 +207,54 @@ export default function Index() {
               <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-purple-deep to-orange-primary flex items-center justify-center mb-6 mx-auto">
                 <Clock className="w-8 h-8 text-white" />
               </div>
-              <h3 className="text-2xl font-bold mb-4 text-center">Real-Time UX</h3>
+              <h3 className="text-2xl font-bold mb-4 text-center">
+                Real-Time UX
+              </h3>
               <p className="text-text-secondary text-center">
-                Instant feedback with native push notifications. Users see market updates 
-                in real-time without polling or websockets.
+                Instant feedback with native push notifications. Users see
+                market updates in real-time without polling or websockets.
               </p>
             </Card>
           </motion.div>
         </div>
+
+        {/* Confidence Flip Feature Card */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ delay: 0.4 }}
+          className="mt-12"
+        >
+          <Card className="p-10 glass-surface relative overflow-hidden hover:border-orange-primary/50 transition-all">
+            <div className="absolute inset-0 bg-gradient-to-br from-orange-primary/5 via-transparent to-purple-deep/5" />
+            <div className="relative z-10 flex flex-col md:flex-row items-center gap-8">
+              <div className="w-24 h-24 rounded-3xl bg-gradient-to-br from-orange-primary to-purple-deep flex items-center justify-center flex-shrink-0">
+                <Target className="w-12 h-12 text-white" />
+              </div>
+              <div className="flex-1 text-center md:text-left">
+                <Badge className="mb-3 bg-orange-primary/20 text-orange-primary border-orange-primary/30">
+                  Featured Game
+                </Badge>
+                <h3 className="text-3xl font-bold mb-3">Confidence Flip</h3>
+                <p className="text-text-secondary text-lg mb-4">
+                  A 10-round micro-game that teaches calibrated prediction using
+                  Brier scoring. Earn badges (Bronze/Silver/Gold/Platinum) and
+                  track your progress. Scores save to your Profile.
+                </p>
+                <Link to="/game/confidence">
+                  <Button
+                    size="lg"
+                    className="bg-gradient-to-r from-orange-primary to-orange-secondary hover:opacity-90"
+                  >
+                    Play Now
+                    <Target className="ml-2 w-5 h-5" />
+                  </Button>
+                </Link>
+              </div>
+            </div>
+          </Card>
+        </motion.div>
       </section>
 
       {/* CTA Section */}
@@ -216,14 +268,16 @@ export default function Index() {
             <div className="absolute inset-0 bg-gradient-to-r from-orange-primary/10 via-blue-electric/10 to-purple-deep/10" />
             <div className="relative z-10">
               <h2 className="text-4xl font-bold mb-4">
-                Ready to experience <span className="text-gradient-primary">real-time</span>?
+                Ready to experience{" "}
+                <span className="text-gradient-primary">real-time</span>?
               </h2>
               <p className="text-text-secondary text-lg mb-8 max-w-2xl mx-auto">
-                Join the Conway testnet and start building prediction markets on Linera microchains today.
+                Join the Conway testnet and start building prediction markets on
+                Linera microchains today.
               </p>
               <Link to="/connect">
-                <Button 
-                  size="lg" 
+                <Button
+                  size="lg"
                   className="bg-gradient-to-r from-orange-primary via-blue-electric to-purple-deep hover:opacity-90 text-lg px-10"
                 >
                   Claim Your Chain
