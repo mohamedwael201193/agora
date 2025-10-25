@@ -19,8 +19,6 @@ import {
 } from "lucide-react";
 import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { DemoModePill } from "./common/DemoModePill";
-import { DeveloperDrawer } from "./DeveloperDrawer";
 import { AgoraLogo } from "./ui/AgoraLogo";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 import {
@@ -97,9 +95,6 @@ export const Layout = ({ children }: { children: React.ReactNode }) => {
 
             {/* Right Actions */}
             <div className="flex items-center gap-3">
-              {/* Demo Mode Indicator */}
-              <DemoModePill />
-
               {/* User Profile Menu */}
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
@@ -139,8 +134,6 @@ export const Layout = ({ children }: { children: React.ReactNode }) => {
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
-
-              <DeveloperDrawer />
 
               <Link to="/connect" className="hidden lg:block">
                 <Button className="bg-gradient-to-r from-orange-primary to-orange-secondary hover:opacity-90">
