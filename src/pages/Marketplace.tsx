@@ -1,18 +1,28 @@
-import { useState } from "react";
+import marketplacePreview from "@/assets/marketplace-preview.jpg";
+import { BetTicket } from "@/components/market/BetTicket";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
-import { Search, TrendingUp, Clock, Users } from "lucide-react";
+import { Market } from "@/stores/useAgoraStore";
 import { motion } from "framer-motion";
-import marketplacePreview from "@/assets/marketplace-preview.jpg";
+import { Clock, Search, TrendingUp, Users } from "lucide-react";
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
-const categories = ["All", "Sports", "Politics", "Crypto", "Entertainment", "Custom"];
+const categories = [
+  "All",
+  "Sports",
+  "Politics",
+  "Crypto",
+  "Entertainment",
+  "Custom",
+];
 
 const markets = [
   {
-    id: 1,
-    question: "Will Bitcoin reach $100k by end of 2025?",
+    id: "market_1",
+    question: "Will Bitcoin reach $150k by end of 2025?",
     category: "Crypto",
     yesOdds: 67,
     noOdds: 33,
@@ -22,7 +32,7 @@ const markets = [
     trending: true,
   },
   {
-    id: 2,
+    id: "market_2",
     question: "Will AI solve protein folding this year?",
     category: "Politics",
     yesOdds: 42,
@@ -33,7 +43,7 @@ const markets = [
     trending: false,
   },
   {
-    id: 3,
+    id: "market_3",
     question: "Next major tech IPO valuation over $50B?",
     category: "Crypto",
     yesOdds: 55,
@@ -44,7 +54,7 @@ const markets = [
     trending: true,
   },
   {
-    id: 4,
+    id: "market_4",
     question: "Climate summit reaches binding agreement?",
     category: "Politics",
     yesOdds: 38,
@@ -57,12 +67,28 @@ const markets = [
 ];
 
 export default function Marketplace() {
+  const navigate = useNavigate();
   const [selectedCategory, setSelectedCategory] = useState("All");
   const [searchQuery, setSearchQuery] = useState("");
+  const [selectedMarket, setSelectedMarket] = useState<Market | null>(null);
+  const [isBetTicketOpen, setIsBetTicketOpen] = useState(false);
 
-  const filteredMarkets = markets.filter(market => {
-    const matchesCategory = selectedCategory === "All" || market.category === selectedCategory;
-    const matchesSearch = market.question.toLowerCase().includes(searchQuery.toLowerCase());
+  const handlePlaceBet = (market: Market, e: React.MouseEvent) => {
+    e.stopPropagation(); // Prevent card click
+    setSelectedMarket(market);
+    setIsBetTicketOpen(true);
+  };
+
+  const handleCardClick = (marketId: string) => {
+    navigate(`/marketplace/${marketId}`);
+  };
+
+  const filteredMarkets = markets.filter((market) => {
+    const matchesCategory =
+      selectedCategory === "All" || market.category === selectedCategory;
+    const matchesSearch = market.question
+      .toLowerCase()
+      .includes(searchQuery.toLowerCase());
     return matchesCategory && matchesSearch;
   });
 
@@ -77,7 +103,8 @@ export default function Marketplace() {
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 mb-8">
           <div>
             <h1 className="text-4xl md:text-5xl font-bold mb-3">
-              Prediction <span className="text-gradient-primary">Marketplace</span>
+              Prediction{" "}
+              <span className="text-gradient-primary">Marketplace</span>
             </h1>
             <p className="text-text-secondary text-lg">
               Real-time markets with sub-second settlement on Linera microchains
@@ -95,9 +122,9 @@ export default function Marketplace() {
           transition={{ delay: 0.1 }}
           className="relative h-64 rounded-xl overflow-hidden mb-8"
         >
-          <img 
-            src={marketplacePreview} 
-            alt="Prediction market interface showing real-time odds and trading charts" 
+          <img
+            src={marketplacePreview}
+            alt="Prediction market interface showing real-time odds and trading charts"
             className="w-full h-full object-cover"
           />
           <div className="absolute inset-0 bg-gradient-to-t from-bg-primary via-bg-primary/50 to-transparent" />
@@ -120,7 +147,9 @@ export default function Marketplace() {
                 key={category}
                 variant={selectedCategory === category ? "default" : "outline"}
                 onClick={() => setSelectedCategory(category)}
-                className={selectedCategory === category ? "bg-orange-primary" : ""}
+                className={
+                  selectedCategory === category ? "bg-orange-primary" : ""
+                }
               >
                 {category}
               </Button>
@@ -136,9 +165,12 @@ export default function Marketplace() {
             key={market.id}
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: index * 0.1 }}
+            transition={{ delay: index * 0.05 }}
           >
-            <Card className="p-6 glass-surface hover:border-orange-primary/50 transition-all group cursor-pointer">
+            <Card
+              className="p-6 glass-surface hover:border-orange-primary/50 transition-all group cursor-pointer"
+              onClick={() => handleCardClick(market.id)}
+            >
               {/* Header */}
               <div className="flex items-start justify-between mb-4">
                 <div className="flex-1">
@@ -162,11 +194,15 @@ export default function Marketplace() {
               {/* Odds Display */}
               <div className="grid grid-cols-2 gap-3 mb-4">
                 <div className="p-4 bg-success/10 border border-success/30 rounded-lg">
-                  <div className="text-2xl font-bold text-success mb-1">{market.yesOdds}%</div>
+                  <div className="text-2xl font-bold text-success mb-1">
+                    {market.yesOdds}%
+                  </div>
                   <div className="text-sm text-text-muted">Yes</div>
                 </div>
                 <div className="p-4 bg-destructive/10 border border-destructive/30 rounded-lg">
-                  <div className="text-2xl font-bold text-destructive mb-1">{market.noOdds}%</div>
+                  <div className="text-2xl font-bold text-destructive mb-1">
+                    {market.noOdds}%
+                  </div>
                   <div className="text-sm text-text-muted">No</div>
                 </div>
               </div>
@@ -178,7 +214,9 @@ export default function Marketplace() {
                     <Users className="w-4 h-4" />
                     {market.participants.toLocaleString()}
                   </span>
-                  <span className="font-semibold text-text-primary">{market.volume}</span>
+                  <span className="font-semibold text-text-primary">
+                    {market.volume}
+                  </span>
                 </div>
                 <span className="flex items-center gap-1">
                   <Clock className="w-4 h-4" />
@@ -186,10 +224,22 @@ export default function Marketplace() {
                 </span>
               </div>
 
-              {/* Action Button */}
-              <Button className="w-full bg-gradient-to-r from-orange-primary to-orange-secondary hover:opacity-90">
-                Place Bet
-              </Button>
+              {/* Action Buttons */}
+              <div className="grid grid-cols-2 gap-3">
+                <Button
+                  variant="outline"
+                  onClick={() => handleCardClick(market.id)}
+                  className="border-orange-primary/50 hover:bg-orange-primary/10"
+                >
+                  View Details
+                </Button>
+                <Button
+                  onClick={(e) => handlePlaceBet(market, e)}
+                  className="bg-gradient-to-r from-orange-primary to-orange-secondary hover:opacity-90"
+                >
+                  Place Bet
+                </Button>
+              </div>
             </Card>
           </motion.div>
         ))}
@@ -202,8 +252,19 @@ export default function Marketplace() {
           animate={{ opacity: 1 }}
           className="text-center py-12"
         >
-          <p className="text-text-muted text-lg">No markets found matching your criteria</p>
+          <p className="text-text-muted text-lg">
+            No markets found matching your criteria
+          </p>
         </motion.div>
+      )}
+
+      {/* Bet Ticket Modal */}
+      {selectedMarket && (
+        <BetTicket
+          market={selectedMarket}
+          open={isBetTicketOpen}
+          onOpenChange={setIsBetTicketOpen}
+        />
       )}
     </div>
   );

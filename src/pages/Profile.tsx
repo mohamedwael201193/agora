@@ -1,43 +1,126 @@
-import { Card } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
+import GameHistoryItem from "@/components/game/GameHistoryItem";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { 
-  Copy, 
-  ExternalLink, 
-  Trophy, 
-  TrendingUp, 
-  Target, 
-  Zap, 
-  Link as LinkIcon, 
-  Search, 
-  DollarSign,
-  CheckCircle,
-  Hammer
-} from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
+import { useAgoraStore } from "@/stores/useAgoraStore";
+import { calculateBadge, getBadgeInfo } from "@/utils/brier";
 import { motion } from "framer-motion";
+import {
+  CheckCircle,
+  Copy,
+  DollarSign,
+  ExternalLink,
+  Hammer,
+  Link as LinkIcon,
+  Search,
+  Target,
+  TrendingUp,
+  Trophy,
+  Zap,
+} from "lucide-react";
 import { toast } from "sonner";
 
 const badges = [
-  { id: 1, tier: "bronze", name: "First Chain", icon: LinkIcon, unlocked: true, progress: 100 },
-  { id: 2, tier: "bronze", name: "Market Explorer", icon: Search, unlocked: true, progress: 100 },
-  { id: 3, tier: "bronze", name: "Predictor", icon: Target, unlocked: true, progress: 100 },
-  { id: 4, tier: "silver", name: "Active Trader", icon: TrendingUp, unlocked: false, progress: 68 },
-  { id: 5, tier: "silver", name: "Market Maker", icon: Hammer, unlocked: false, progress: 0 },
-  { id: 6, tier: "gold", name: "Prediction Expert", icon: Trophy, unlocked: false, progress: 12 },
-  { id: 7, tier: "platinum", name: "Chain Legend", icon: Zap, unlocked: false, progress: 0 },
+  {
+    id: 1,
+    tier: "bronze",
+    name: "First Chain",
+    icon: LinkIcon,
+    unlocked: true,
+    progress: 100,
+  },
+  {
+    id: 2,
+    tier: "bronze",
+    name: "Market Explorer",
+    icon: Search,
+    unlocked: true,
+    progress: 100,
+  },
+  {
+    id: 3,
+    tier: "bronze",
+    name: "Predictor",
+    icon: Target,
+    unlocked: true,
+    progress: 100,
+  },
+  {
+    id: 4,
+    tier: "silver",
+    name: "Active Trader",
+    icon: TrendingUp,
+    unlocked: false,
+    progress: 68,
+  },
+  {
+    id: 5,
+    tier: "silver",
+    name: "Market Maker",
+    icon: Hammer,
+    unlocked: false,
+    progress: 0,
+  },
+  {
+    id: 6,
+    tier: "gold",
+    name: "Prediction Expert",
+    icon: Trophy,
+    unlocked: false,
+    progress: 12,
+  },
+  {
+    id: 7,
+    tier: "platinum",
+    name: "Chain Legend",
+    icon: Zap,
+    unlocked: false,
+    progress: 0,
+  },
 ];
 
 const recentActivity = [
-  { id: 1, type: "bet", action: "Placed bet on 'Bitcoin $100k'", amount: "+$250", time: "2 hours ago", icon: Target },
-  { id: 2, type: "win", action: "Won market 'AI Breakthrough'", amount: "+$420", time: "5 hours ago", icon: CheckCircle },
-  { id: 3, type: "create", action: "Created market 'Tech IPO'", amount: "", time: "1 day ago", icon: Hammer },
-  { id: 4, type: "bet", action: "Placed bet on 'Climate Summit'", amount: "+$150", time: "2 days ago", icon: DollarSign },
+  {
+    id: 1,
+    type: "bet",
+    action: "Placed bet on 'Bitcoin $100k'",
+    amount: "+$250",
+    time: "2 hours ago",
+    icon: Target,
+  },
+  {
+    id: 2,
+    type: "win",
+    action: "Won market 'AI Breakthrough'",
+    amount: "+$420",
+    time: "5 hours ago",
+    icon: CheckCircle,
+  },
+  {
+    id: 3,
+    type: "create",
+    action: "Created market 'Tech IPO'",
+    amount: "",
+    time: "1 day ago",
+    icon: Hammer,
+  },
+  {
+    id: 4,
+    type: "bet",
+    action: "Placed bet on 'Climate Summit'",
+    amount: "+$150",
+    time: "2 days ago",
+    icon: DollarSign,
+  },
 ];
 
 export default function Profile() {
   const chainId = "chain_a7f3d9c2e8b1";
-  
+  const { bestScore, totalGames, gameHistory } = useAgoraStore();
+
+  const currentBadge = calculateBadge(bestScore);
+  const badgeInfo = getBadgeInfo(currentBadge);
+
   const copyChainId = () => {
     navigator.clipboard.writeText(chainId);
     toast.success("Chain ID copied!");
@@ -62,8 +145,15 @@ export default function Profile() {
             <div className="flex-1">
               <h1 className="text-3xl font-bold mb-2">Agora Explorer</h1>
               <div className="flex items-center gap-2 mb-4">
-                <code className="text-sm text-text-muted font-mono">{chainId}</code>
-                <Button size="sm" variant="ghost" onClick={copyChainId} className="h-6 w-6 p-0">
+                <code className="text-sm text-text-muted font-mono">
+                  {chainId}
+                </code>
+                <Button
+                  size="sm"
+                  variant="ghost"
+                  onClick={copyChainId}
+                  className="h-6 w-6 p-0"
+                >
                   <Copy className="w-3 h-3" />
                 </Button>
               </div>
@@ -121,6 +211,117 @@ export default function Profile() {
       <div className="grid md:grid-cols-[1fr_400px] gap-8">
         {/* Left Column */}
         <div className="space-y-8">
+          {/* Game Stats Section */}
+          <motion.div
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ delay: 0.15 }}
+          >
+            <Card className="p-6 glass-surface">
+              <h2 className="text-2xl font-bold mb-6 flex items-center gap-2">
+                <Target className="w-6 h-6 text-primary" />
+                Confidence Flip Stats
+              </h2>
+
+              {totalGames > 0 ? (
+                <div className="space-y-6">
+                  {/* Current Badge Display */}
+                  <div
+                    className="p-6 rounded-lg text-center"
+                    style={{ background: badgeInfo.gradient }}
+                  >
+                    <div
+                      className="text-5xl mb-3"
+                      role="img"
+                      aria-label={`${currentBadge} badge`}
+                    >
+                      {badgeInfo.emoji}
+                    </div>
+                    <h3 className="text-xl font-bold text-white mb-1">
+                      {badgeInfo.name} Badge
+                    </h3>
+                    <p className="text-sm text-white/80">
+                      {badgeInfo.description}
+                    </p>
+                  </div>
+
+                  {/* Stats Grid */}
+                  <div className="grid grid-cols-3 gap-4">
+                    <div className="text-center p-4 bg-muted rounded-lg">
+                      <div className="text-3xl font-bold text-primary">
+                        {bestScore.toFixed(1)}%
+                      </div>
+                      <div className="text-xs text-muted-foreground mt-1">
+                        Best Score
+                      </div>
+                    </div>
+                    <div className="text-center p-4 bg-muted rounded-lg">
+                      <div className="text-3xl font-bold">{totalGames}</div>
+                      <div className="text-xs text-muted-foreground mt-1">
+                        Games Played
+                      </div>
+                    </div>
+                    <div className="text-center p-4 bg-muted rounded-lg">
+                      <div className="text-3xl font-bold">
+                        {gameHistory.length > 0
+                          ? (
+                              gameHistory.reduce(
+                                (sum, g) => sum + g.percentileScore,
+                                0
+                              ) / gameHistory.length
+                            ).toFixed(1)
+                          : "0.0"}
+                        %
+                      </div>
+                      <div className="text-xs text-muted-foreground mt-1">
+                        Avg Score
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Recent Game History */}
+                  {gameHistory.length > 0 && (
+                    <div className="space-y-4">
+                      <h3 className="font-semibold text-sm text-muted-foreground">
+                        Recent Games
+                      </h3>
+                      <div className="space-y-3">
+                        {gameHistory.slice(0, 3).map((game) => (
+                          <GameHistoryItem key={game.id} game={game} />
+                        ))}
+                      </div>
+                      {gameHistory.length > 3 && (
+                        <Button
+                          variant="outline"
+                          className="w-full"
+                          onClick={() =>
+                            (window.location.href = "/game/confidence")
+                          }
+                        >
+                          View All Games
+                        </Button>
+                      )}
+                    </div>
+                  )}
+                </div>
+              ) : (
+                <div className="text-center py-8">
+                  <Target className="w-16 h-16 text-muted-foreground mx-auto mb-4" />
+                  <h3 className="text-lg font-semibold mb-2">No Games Yet</h3>
+                  <p className="text-sm text-muted-foreground mb-4">
+                    Start playing Confidence Flip to earn badges and track your
+                    prediction skills!
+                  </p>
+                  <Button
+                    onClick={() => (window.location.href = "/game/confidence")}
+                  >
+                    Play Now
+                  </Button>
+                </div>
+              )}
+            </Card>
+          </motion.div>
+
           {/* Achievement Badges */}
           <motion.div
             initial={{ opacity: 0, x: -20 }}
@@ -147,7 +348,9 @@ export default function Profile() {
 
                   return (
                     <div key={tier}>
-                      <h3 className={`font-semibold mb-3 capitalize text-${color}`}>
+                      <h3
+                        className={`font-semibold mb-3 capitalize text-${color}`}
+                      >
                         {tier} Chains
                       </h3>
                       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
@@ -166,16 +369,20 @@ export default function Profile() {
                               <div className="w-12 h-12 rounded-lg bg-orange-primary/20 flex items-center justify-center mx-auto mb-2">
                                 <BadgeIcon className="w-6 h-6 text-orange-primary" />
                               </div>
-                              <div className="text-xs font-medium mb-1">{badge.name}</div>
+                              <div className="text-xs font-medium mb-1">
+                                {badge.name}
+                              </div>
                               {!badge.unlocked && badge.progress > 0 && (
                                 <div className="mt-2">
                                   <div className="h-1 bg-surface rounded-full overflow-hidden">
-                                    <div 
+                                    <div
                                       className="h-full bg-orange-primary"
                                       style={{ width: `${badge.progress}%` }}
                                     />
                                   </div>
-                                  <div className="text-xs text-text-muted mt-1">{badge.progress}%</div>
+                                  <div className="text-xs text-text-muted mt-1">
+                                    {badge.progress}%
+                                  </div>
                                 </div>
                               )}
                             </motion.div>
@@ -213,7 +420,7 @@ export default function Profile() {
                       key={activity.id}
                       initial={{ opacity: 0, y: 10 }}
                       animate={{ opacity: 1, y: 0 }}
-                      transition={{ delay: 0.4 + (index * 0.05) }}
+                      transition={{ delay: 0.4 + index * 0.05 }}
                       className="p-4 bg-surface-elevated rounded-lg"
                     >
                       <div className="flex items-start gap-3">
@@ -221,8 +428,12 @@ export default function Profile() {
                           <ActivityIcon className="w-5 h-5 text-blue-electric" />
                         </div>
                         <div className="flex-1 min-w-0">
-                          <p className="text-sm font-medium">{activity.action}</p>
-                          <p className="text-xs text-text-muted mt-1">{activity.time}</p>
+                          <p className="text-sm font-medium">
+                            {activity.action}
+                          </p>
+                          <p className="text-xs text-text-muted mt-1">
+                            {activity.time}
+                          </p>
                         </div>
                         {activity.amount && (
                           <span className="text-sm font-semibold text-success whitespace-nowrap">

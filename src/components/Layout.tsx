@@ -1,28 +1,28 @@
-import { Link, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { 
-  Home, 
-  Link as LinkIcon, 
-  Store, 
-  Clock, 
-  Hammer, 
-  Network, 
-  Map, 
-  User,
-  Activity
-} from "lucide-react";
-import { motion } from "framer-motion";
-import { RealTimeHUD } from "./realtime/RealTimeHUD";
-import { NotificationFeed } from "./notifications/NotificationFeed";
-import { DeveloperDrawer } from "./DeveloperDrawer";
 import { useNotifications } from "@/hooks/useNotifications";
 import { useAgoraStore } from "@/stores/useAgoraStore";
+import { motion } from "framer-motion";
+import {
+  Activity,
+  Clock,
+  Hammer,
+  Home,
+  Link as LinkIcon,
+  Map,
+  Network,
+  Store,
+  Target,
+  User,
+  X,
+  Zap,
+} from "lucide-react";
 import { useState } from "react";
-import { X } from "lucide-react";
+import { Link, useLocation } from "react-router-dom";
+import { DeveloperDrawer } from "./DeveloperDrawer";
 import { AgoraLogo } from "./ui/AgoraLogo";
-import { NavigationMenu } from "./ui/NavigationMenu";
 import { MobileNav } from "./ui/MobileNav";
+import { NavigationMenu } from "./ui/NavigationMenu";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 import {
   DropdownMenu,
@@ -41,6 +41,9 @@ const primaryNavItems = [
 ];
 
 const secondaryNavItems = [
+  { path: "/game/confidence", label: "Game", icon: Target },
+  { path: "/demo/counter", label: "Demo: Counter", icon: Zap },
+  { path: "/demo/transfer", label: "Demo: Transfer", icon: Activity },
   { path: "/foundry", label: "Foundry Builder", icon: Hammer },
   { path: "/architecture", label: "Architecture", icon: Network },
   { path: "/roadmap", label: "Roadmap", icon: Map },
@@ -53,7 +56,7 @@ export const Layout = ({ children }: { children: React.ReactNode }) => {
   const location = useLocation();
   const [showTestnetBanner, setShowTestnetBanner] = useState(true);
   const { latency, showPerformanceMetrics } = useAgoraStore();
-  
+
   // Initialize notifications hook
   useNotifications();
 
@@ -61,13 +64,14 @@ export const Layout = ({ children }: { children: React.ReactNode }) => {
     <div className="min-h-screen bg-bg-primary text-text-primary">
       {/* Testnet Banner */}
       {showTestnetBanner && (
-        <motion.div 
+        <motion.div
           initial={{ y: -50, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
           exit={{ y: -50, opacity: 0 }}
           className="bg-gradient-to-r from-orange-primary/20 to-blue-electric/20 border-b border-orange-primary/30 px-4 py-2 text-center text-sm relative"
         >
-          <span className="font-semibold">Conway Testnet</span> — No Real Value • Learn & Experiment Safely
+          <span className="font-semibold">Conway Testnet</span> — No Real Value
+          • Learn & Experiment Safely
           <button
             onClick={() => setShowTestnetBanner(false)}
             className="absolute right-4 top-1/2 -translate-y-1/2 hover:text-orange-primary transition-colors"
@@ -84,9 +88,9 @@ export const Layout = ({ children }: { children: React.ReactNode }) => {
           <div className="flex items-center justify-between">
             {/* Animated Logo */}
             <AgoraLogo />
-            
+
             {/* Desktop Navigation with Dropdown */}
-            <NavigationMenu 
+            <NavigationMenu
               primaryItems={primaryNavItems}
               secondaryItems={secondaryNavItems}
             />
@@ -96,8 +100,8 @@ export const Layout = ({ children }: { children: React.ReactNode }) => {
               {/* User Profile Menu */}
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <Button 
-                    variant="ghost" 
+                  <Button
+                    variant="ghost"
                     className="hidden lg:flex items-center gap-2 hover:bg-surface"
                   >
                     <Avatar className="h-8 w-8">
@@ -108,8 +112,8 @@ export const Layout = ({ children }: { children: React.ReactNode }) => {
                     </Avatar>
                   </Button>
                 </DropdownMenuTrigger>
-                <DropdownMenuContent 
-                  align="end" 
+                <DropdownMenuContent
+                  align="end"
                   className="w-56 glass-surface border-border/80"
                 >
                   <DropdownMenuLabel>My Account</DropdownMenuLabel>
@@ -134,7 +138,7 @@ export const Layout = ({ children }: { children: React.ReactNode }) => {
               </DropdownMenu>
 
               <DeveloperDrawer />
-              
+
               <Link to="/connect" className="hidden lg:block">
                 <Button className="bg-gradient-to-r from-orange-primary to-orange-secondary hover:opacity-90">
                   Launch App
@@ -162,15 +166,21 @@ export const Layout = ({ children }: { children: React.ReactNode }) => {
             </div>
             <div className="grid grid-cols-3 gap-3 text-xs">
               <div className="text-center">
-                <div className="font-bold text-success mb-1">{latency.mutation}ms</div>
+                <div className="font-bold text-success mb-1">
+                  {latency.mutation}ms
+                </div>
                 <div className="text-[10px] text-text-muted">Mutation</div>
               </div>
               <div className="text-center">
-                <div className="font-bold text-blue-electric mb-1">{latency.notification}ms</div>
+                <div className="font-bold text-blue-electric mb-1">
+                  {latency.notification}ms
+                </div>
                 <div className="text-[10px] text-text-muted">Notify</div>
               </div>
               <div className="text-center">
-                <div className="font-bold text-orange-primary mb-1">{latency.endToEnd}ms</div>
+                <div className="font-bold text-orange-primary mb-1">
+                  {latency.endToEnd}ms
+                </div>
                 <div className="text-[10px] text-text-muted">E2E</div>
               </div>
             </div>
@@ -194,30 +204,95 @@ export const Layout = ({ children }: { children: React.ReactNode }) => {
             <div>
               <h4 className="font-semibold mb-4">Product</h4>
               <ul className="space-y-2 text-sm text-text-muted">
-                <li><Link to="/marketplace" className="hover:text-orange-primary transition-colors">Marketplace</Link></li>
-                <li><Link to="/chrono-echoes" className="hover:text-orange-primary transition-colors">Chrono-Echoes</Link></li>
-                <li><Link to="/foundry" className="hover:text-orange-primary transition-colors">Foundry Builder</Link></li>
+                <li>
+                  <Link
+                    to="/marketplace"
+                    className="hover:text-orange-primary transition-colors"
+                  >
+                    Marketplace
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    to="/chrono-echoes"
+                    className="hover:text-orange-primary transition-colors"
+                  >
+                    Chrono-Echoes
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    to="/foundry"
+                    className="hover:text-orange-primary transition-colors"
+                  >
+                    Foundry Builder
+                  </Link>
+                </li>
               </ul>
             </div>
             <div>
               <h4 className="font-semibold mb-4">Resources</h4>
               <ul className="space-y-2 text-sm text-text-muted">
-                <li><Link to="/architecture" className="hover:text-orange-primary transition-colors">Architecture</Link></li>
-                <li><Link to="/roadmap" className="hover:text-orange-primary transition-colors">Roadmap</Link></li>
-                <li><a href="#" className="hover:text-orange-primary transition-colors">Documentation</a></li>
+                <li>
+                  <Link
+                    to="/architecture"
+                    className="hover:text-orange-primary transition-colors"
+                  >
+                    Architecture
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    to="/roadmap"
+                    className="hover:text-orange-primary transition-colors"
+                  >
+                    Roadmap
+                  </Link>
+                </li>
+                <li>
+                  <a
+                    href="#"
+                    className="hover:text-orange-primary transition-colors"
+                  >
+                    Documentation
+                  </a>
+                </li>
               </ul>
             </div>
             <div>
               <h4 className="font-semibold mb-4">Community</h4>
               <ul className="space-y-2 text-sm text-text-muted">
-                <li><a href="#" className="hover:text-orange-primary transition-colors">Discord</a></li>
-                <li><a href="#" className="hover:text-orange-primary transition-colors">Twitter</a></li>
-                <li><a href="#" className="hover:text-orange-primary transition-colors">GitHub</a></li>
+                <li>
+                  <a
+                    href="#"
+                    className="hover:text-orange-primary transition-colors"
+                  >
+                    Discord
+                  </a>
+                </li>
+                <li>
+                  <a
+                    href="#"
+                    className="hover:text-orange-primary transition-colors"
+                  >
+                    Twitter
+                  </a>
+                </li>
+                <li>
+                  <a
+                    href="#"
+                    className="hover:text-orange-primary transition-colors"
+                  >
+                    GitHub
+                  </a>
+                </li>
               </ul>
             </div>
           </div>
           <div className="border-t border-border/50 mt-8 pt-8 text-center text-sm text-text-muted">
-            <p>© 2025 Agora. Built on Linera microchains. All rights reserved.</p>
+            <p>
+              © 2025 Agora. Built on Linera microchains. All rights reserved.
+            </p>
           </div>
         </div>
       </footer>

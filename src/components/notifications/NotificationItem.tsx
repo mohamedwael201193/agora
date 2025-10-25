@@ -1,23 +1,33 @@
-import { motion } from "framer-motion";
-import { Bell, TrendingUp, CheckCircle2, Activity, AlertCircle } from "lucide-react";
-import { Notification } from "@/stores/useAgoraStore";
 import { cn } from "@/lib/utils";
+import { Notification } from "@/stores/useAgoraStore";
+import { motion } from "framer-motion";
+import {
+  Activity,
+  AlertCircle,
+  Bell,
+  CheckCircle2,
+  TrendingUp,
+} from "lucide-react";
+import { memo } from "react";
 
 interface NotificationItemProps {
   notification: Notification;
   onClick?: () => void;
 }
 
-export const NotificationItem = ({ notification, onClick }: NotificationItemProps) => {
+export const NotificationItem = memo(function NotificationItem({
+  notification,
+  onClick,
+}: NotificationItemProps) {
   const getIcon = () => {
     switch (notification.type) {
-      case 'bet_placed':
+      case "bet_placed":
         return TrendingUp;
-      case 'market_resolved':
+      case "market_resolved":
         return CheckCircle2;
-      case 'position_updated':
+      case "position_updated":
         return Activity;
-      case 'chain_message':
+      case "chain_message":
         return Bell;
       default:
         return AlertCircle;
@@ -26,13 +36,13 @@ export const NotificationItem = ({ notification, onClick }: NotificationItemProp
 
   const getIconColor = () => {
     switch (notification.type) {
-      case 'bet_placed':
+      case "bet_placed":
         return "text-orange-primary";
-      case 'market_resolved':
+      case "market_resolved":
         return "text-success";
-      case 'position_updated':
+      case "position_updated":
         return "text-blue-electric";
-      case 'chain_message':
+      case "chain_message":
         return "text-purple-deep";
       default:
         return "text-text-muted";
@@ -52,7 +62,7 @@ export const NotificationItem = ({ notification, onClick }: NotificationItemProp
     if (days > 0) return `${days}d ago`;
     if (hours > 0) return `${hours}h ago`;
     if (minutes > 0) return `${minutes}m ago`;
-    return 'Just now';
+    return "Just now";
   };
 
   return (
@@ -69,18 +79,28 @@ export const NotificationItem = ({ notification, onClick }: NotificationItemProp
           : "bg-surface-elevated border-orange-primary/30 shadow-sm"
       )}
     >
-      <div className={cn("flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center", 
-        notification.read ? "bg-surface-elevated" : "bg-orange-primary/10"
-      )}>
-        <Icon className={cn("w-4 h-4", notification.read ? "text-text-muted" : iconColor)} />
+      <div
+        className={cn(
+          "flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center",
+          notification.read ? "bg-surface-elevated" : "bg-orange-primary/10"
+        )}
+      >
+        <Icon
+          className={cn(
+            "w-4 h-4",
+            notification.read ? "text-text-muted" : iconColor
+          )}
+        />
       </div>
 
       <div className="flex-1 min-w-0">
         <div className="flex items-start justify-between gap-2 mb-1">
-          <h4 className={cn(
-            "text-sm font-semibold truncate",
-            notification.read ? "text-text-secondary" : "text-text-primary"
-          )}>
+          <h4
+            className={cn(
+              "text-sm font-semibold truncate",
+              notification.read ? "text-text-secondary" : "text-text-primary"
+            )}
+          >
             {notification.title}
           </h4>
           {!notification.read && (
@@ -98,4 +118,4 @@ export const NotificationItem = ({ notification, onClick }: NotificationItemProp
       </div>
     </motion.div>
   );
-};
+});
