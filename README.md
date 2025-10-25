@@ -11,7 +11,7 @@
 [![Vite](https://img.shields.io/badge/Vite-5.4-646cff?style=flat-square&logo=vite)](https://vitejs.dev/)
 [![Tailwind CSS](https://img.shields.io/badge/Tailwind-3.4-38bdf8?style=flat-square&logo=tailwindcss)](https://tailwindcss.com/)
 
-[🎮 Try Demo](https://lovable.dev/projects/c325c20c-feab-471d-bdae-2e3c7adff030) • [📖 Documentation](#documentation) • [🗺️ Roadmap](#roadmap) • [🤝 Contributing](#contributing)
+[🎮 Live Demo](https://agora-rho.vercel.app/) • [📖 Documentation](#documentation) • [🗺️ Roadmap](#roadmap) • [🤝 Contributing](#contributing) • [🐦 Follow DEVMO](https://x.com/Mowael777)
 
 </div>
 
@@ -330,20 +330,21 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## 🔗 Links
 
-- **Live Demo**: [Agora on Lovable](https://lovable.dev/projects/c325c20c-feab-471d-bdae-2e3c7adff030)
+- **Live Demo**: [https://agora-rho.vercel.app/](https://agora-rho.vercel.app/)
+- **Developer**: [Mohamed Wael (DEVMO)](https://x.com/Mowael777)
+- **GitHub**: [mohamedwael201193](https://github.com/mohamedwael201193)
 - **Documentation**: Coming soon
 - **Discord**: Coming soon
-- **Twitter**: Coming soon
 
 ---
 
 ## 🙏 Acknowledgments
 
-Built with ❤️ by the Agora team using:
+Built with ❤️ by [Mohamed Wael (DEVMO)](https://x.com/Mowael777) using:
 
-- [Lovable](https://lovable.dev) - AI-powered development platform
 - [shadcn/ui](https://ui.shadcn.com/) - Beautiful component library
 - [Cardano](https://cardano.org/) - Blockchain foundation
+- [React](https://react.dev/) & [TypeScript](https://www.typescriptlang.org/) - Modern web development
 
 ---
 
@@ -351,7 +352,7 @@ Built with ❤️ by the Agora team using:
 
 **⚠️ Conway Testnet - No Real Value - Learn & Experiment Safely ⚠️**
 
-Made with 🧡 for the Cardano community
+Made with 🧡 for the Cardano community by [DEVMO](https://x.com/Mowael777)
 
 [⬆ Back to Top](#-agora)
 
