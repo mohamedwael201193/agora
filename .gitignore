@@ -21,7 +21,7 @@ target/
 !.env.example
 
 # Linera wallet (NEVER commit this!)
-wallet.json
+# wallet.json  # Temporarily commented for deployment
 keystore.json
 *.db
 
