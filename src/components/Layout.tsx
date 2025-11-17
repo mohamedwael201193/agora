@@ -9,13 +9,12 @@ import {
     Hammer,
     Home,
     Link as LinkIcon,
-    Map,
     Network,
     Store,
     Target,
     User,
     X,
-    Zap,
+    Zap
 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
@@ -38,7 +37,6 @@ const primaryNavItems = [
   { path: "/", label: "Home", icon: Home },
   { path: "/marketplace", label: "Marketplace", icon: Store },
   { path: "/game/confidence", label: "Game", icon: Target },
-  { path: "/roadmap", label: "Roadmap", icon: Map },
   { path: "/foundry", label: "Foundry Builder", icon: Hammer },
 ];
 
@@ -238,14 +236,6 @@ export const Layout = ({ children }: { children: React.ReactNode }) => {
                     className="hover:text-orange-primary transition-colors"
                   >
                     Architecture
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    to="/roadmap"
-                    className="hover:text-orange-primary transition-colors"
-                  >
-                    Roadmap
                   </Link>
                 </li>
                 <li>

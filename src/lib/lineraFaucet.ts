@@ -223,10 +223,10 @@ export class LineraFaucet {
     try {
       console.log('[Faucet] Querying balance for chain', chainId);
 
-      // Query GraphQL endpoint for balance
+      // Query chain-specific endpoint (Linera docs way)
       const query = `
         query {
-          chain(chainId: "${chainId}") {
+          chain {
             executionState {
               system {
                 balance
@@ -236,7 +236,8 @@ export class LineraFaucet {
         }
       `;
 
-      const response = await fetch(`${this.config.validatorUrl}/graphql`, {
+      // Use chain-specific endpoint as per Linera docs
+      const response = await fetch(`${this.config.validatorUrl}/chains/${chainId}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -247,17 +248,18 @@ export class LineraFaucet {
       if (!response.ok) {
         // If GraphQL fails, return default balance
         console.warn('[Faucet] Failed to query balance, using default');
-        return { balance: '1000000000', chainId };
+        return { balance: '100000000', chainId };
       }
 
       const result = await response.json();
-      const balance = result.data?.chain?.executionState?.system?.balance || '1000000000';
+      const balance = result.data?.chain?.executionState?.system?.balance || '100000000';
 
+      console.log('[Faucet] Balance query result:', balance);
       return { balance, chainId };
     } catch (error) {
       console.warn('[Faucet] Balance query error:', error);
-      // Return default balance on error
-      return { balance: '1000000000', chainId };
+      // Return default balance on error (100 tokens)
+      return { balance: '100000000', chainId };
     }
   }
 

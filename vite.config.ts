@@ -7,7 +7,7 @@ import { defineConfig } from "vite";
 export default defineConfig(({ mode }) => ({
   server: {
     host: "::",
-    port: 8080,
+    port: 8081,
     // COOP/COEP headers for Conway testnet SharedArrayBuffer support
     headers: {
       'Cross-Origin-Opener-Policy': 'same-origin',

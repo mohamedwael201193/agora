@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Import Conway Wallet</title>
+    <style>
+        body {
+            font-family: system-ui, -apple-system, sans-serif;
+            max-width: 600px;
+            margin: 50px auto;
+            padding: 20px;
+            background: #1a1a2e;
+            color: #eee;
+        }
+
+        .container {
+            background: #16213e;
+            padding: 30px;
+            border-radius: 10px;
+            border: 1px solid #0f3460;
+        }
+
+        h1 {
+            color: #e94560;
+            margin-top: 0;
+        }
+
+        input,
+        button {
+            width: 100%;
+            padding: 12px;
+            margin: 10px 0;
+            border-radius: 6px;
+            border: 1px solid #0f3460;
+            background: #0f3460;
+            color: #eee;
+            font-size: 14px;
+        }
+
+        button {
+            background: #e94560;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        button:hover {
+            background: #d13550;
+        }
+
+        .success {
+            color: #2ecc71;
+        }
+
+        .error {
+            color: #e94560;
+        }
+
+        .code {
+            background: #0a0e27;
+            padding: 15px;
+            border-radius: 6px;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            overflow-x: auto;
+            margin: 10px 0;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>🔗 Import Conway Wallet</h1>
+        <p>Import your Conway testnet chain into the Agora browser application.</p>
+
+        <label for="chainId">Chain ID:</label>
+        <input type="text" id="chainId" placeholder="a5cae6d03adc2cd50fcf007b89562c27ce70fda6e8dfe44e3820f0a605f3be13"
+            value="a5cae6d03adc2cd50fcf007b89562c27ce70fda6e8dfe44e3820f0a605f3be13" />
+
+        <label for="publicKey">Public Key (Owner):</label>
+        <input type="text" id="publicKey"
+            placeholder="0xf150ff23fcd1bfd23c78c653287f574df7f74652368263b9dc1514c3cdf12309"
+            value="0xf150ff23fcd1bfd23c78c653287f574df7f74652368263b9dc1514c3cdf12309" />
+
+        <label for="balance">Balance (in smallest unit):</label>
+        <input type="text" id="balance" placeholder="99000000" value="99000000" />
+
+        <button onclick="importWallet()">Import Wallet</button>
+
+        <div id="result"></div>
+
+        <hr style="margin: 30px 0; border-color: #0f3460;">
+
+        <h3>Alternative: Browser Console Method</h3>
+        <p>Or paste this code in your browser console (F12):</p>
+        <div class="code">
+            // Import Conway wallet manually
+            const wallet = {
+            chainId: 'a5cae6d03adc2cd50fcf007b89562c27ce70fda6e8dfe44e3820f0a605f3be13',
+            publicKey: '0xf150ff23fcd1bfd23c78c653287f574df7f74652368263b9dc1514c3cdf12309',
+            balance: '99000000',
+            network: 'conway',
+            createdAt: Date.now()
+            };
+
+            // Save to IndexedDB
+            const request = indexedDB.open('linera-wallet', 1);
+            request.onupgradeneeded = (e) => {
+            const db = e.target.result;
+            if (!db.objectStoreNames.contains('wallets')) {
+            db.createObjectStore('wallets', { keyPath: 'chainId' });
+            }
+            };
+            request.onsuccess = (e) => {
+            const db = e.target.result;
+            const tx = db.transaction(['wallets'], 'readwrite');
+            tx.objectStore('wallets').put(wallet);
+            tx.oncomplete = () => {
+            console.log('✅ Wallet imported! Refresh page.');
+            location.reload();
+            };
+            };
+        </div>
+    </div>
+
+    <script>
+        async function importWallet() {
+            const chainId = document.getElementById('chainId').value.trim();
+            const publicKey = document.getElementById('publicKey').value.trim();
+            const balance = document.getElementById('balance').value.trim();
+            const result = document.getElementById('result');
+
+            if (!chainId || !publicKey || !balance) {
+                result.innerHTML = '<p class="error">❌ Please fill all fields</p>';
+                return;
+            }
+
+            const wallet = {
+                chainId,
+                publicKey,
+                balance,
+                network: 'conway',
+                createdAt: Date.now()
+            };
+
+            try {
+                const request = indexedDB.open('linera-wallet', 1);
+
+                request.onupgradeneeded = function (event) {
+                    const db = event.target.result;
+                    if (!db.objectStoreNames.contains('wallets')) {
+                        db.createObjectStore('wallets', { keyPath: 'chainId' });
+                    }
+                };
+
+                request.onsuccess = function (event) {
+                    const db = event.target.result;
+                    const transaction = db.transaction(['wallets'], 'readwrite');
+                    const store = transaction.objectStore('wallets');
+
+                    store.put(wallet);
+
+                    transaction.oncomplete = function () {
+                        result.innerHTML = '<p class="success">✅ Wallet imported successfully! Redirecting...</p>';
+                        setTimeout(() => {
+                            window.location.href = '/';
+                        }, 2000);
+                    };
+
+                    transaction.onerror = function () {
+                        result.innerHTML = '<p class="error">❌ Failed to save wallet</p>';
+                    };
+                };
+
+                request.onerror = function () {
+                    result.innerHTML = '<p class="error">❌ Failed to open database</p>';
+                };
+            } catch (error) {
+                result.innerHTML = `<p class="error">❌ Error: ${error.message}</p>`;
+            }
+        }
+    </script>
+</body>
+
+</html>

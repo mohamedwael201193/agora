@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
-import { AgoraClient } from "@/lib/agoraClient";
+import { createAgoraClient } from "@/lib/agoraClient";
 import { Market } from "@/stores/useAgoraStore";
 import { motion } from "framer-motion";
 import { Clock, Loader2, Search, TrendingUp, Users } from "lucide-react";
@@ -57,12 +57,8 @@ export default function Marketplace() {
   const [markets, setMarkets] = useState<DisplayMarket[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
-  // Initialize Linera client
-  const agoraClient = new AgoraClient({
-    nodeUrl: import.meta.env.VITE_NODE_URL || 'http://localhost:8080',
-    applicationId: import.meta.env.VITE_AGORA_APP_ID || '',
-    registryChainId: import.meta.env.VITE_REGISTRY_CHAIN_ID || '',
-  });
+  // Initialize Linera client with network detection
+  const agoraClient = createAgoraClient();
 
   // Track if this is the first load
   const [isFirstLoad, setIsFirstLoad] = React.useState(true);

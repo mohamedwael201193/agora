@@ -52,25 +52,15 @@ export default function Index() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8 }}
           >
-            <Badge className="mb-6 bg-amber-500/20 text-amber-400 border-amber-500/30 text-base px-4 py-2">
-              Wave 1 Demo
-            </Badge>
-
             <h1 className="text-5xl md:text-7xl font-bold mb-6">
               Don't be late.
               <br />
               <span className="text-gradient-primary">Be real-time.</span>
             </h1>
 
-            <p className="text-xl md:text-2xl text-text-secondary mb-4 max-w-3xl mx-auto">
+            <p className="text-xl md:text-2xl text-text-secondary mb-8 max-w-3xl mx-auto">
               Build prediction markets, games, and agentic apps on Linera
               microchains with sub-second finality.
-            </p>
-
-            <p className="text-base text-text-muted mb-8 max-w-2xl mx-auto">
-              This Wave 1 demo uses simulated data to showcase the user
-              experience. No on‑chain state is created. Testnet integration
-              launches in Wave 2.
             </p>
 
             {/* Stats Strip with Tooltips */}
@@ -120,15 +110,6 @@ export default function Index() {
                   className="border-blue-electric/50 text-blue-electric hover:bg-blue-electric/10 text-lg px-8"
                 >
                   View Architecture
-                </Button>
-              </Link>
-              <Link to="/roadmap">
-                <Button
-                  size="lg"
-                  variant="outline"
-                  className="border-purple-deep/50 text-purple-deep hover:bg-purple-deep/10 text-lg px-8"
-                >
-                  See Roadmap
                 </Button>
               </Link>
             </motion.div>

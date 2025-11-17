@@ -3,7 +3,7 @@
  * Allows users to claim a personal microchain from the faucet
  */
 
-import { AlertCircle, CheckCircle2, Network, Shield, TrendingUp, Zap } from 'lucide-react';
+import { AlertCircle, CheckCircle2, Loader2, Network, Shield, TrendingUp, Zap } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '../components/ui/button';
@@ -82,19 +82,43 @@ export default function Connect() {
             {/* Network-specific instructions */}
             {network === 'conway' ? (
               <div className="space-y-4">
-                <div className="p-4 bg-blue-500/10 border border-blue-500/20 rounded-lg">
-                  <div className="flex items-center gap-2 text-blue-400 mb-3">
-                    <AlertCircle className="w-5 h-5" />
-                    <span className="font-semibold">Conway Testnet Requires Linera CLI</span>
+                <div className="p-4 bg-gradient-to-r from-purple-500/20 to-pink-500/20 border border-purple-500/30 rounded-lg">
+                  <div className="flex items-center gap-2 text-purple-300 mb-3">
+                    <Zap className="w-5 h-5" />
+                    <span className="font-semibold">Connect to Conway Testnet</span>
                   </div>
-                  <p className="text-sm text-gray-400 mb-3">
-                    To use the real Conway testnet, install the Linera CLI:
+                  <p className="text-sm text-gray-300 mb-4">
+                    Click below to connect your existing Conway chain or import your wallet.
                   </p>
-                  <div className="bg-gray-900/50 rounded p-3 font-mono text-xs text-green-400 space-y-1">
-                    <div># Install Linera CLI</div>
-                    <div>cargo install linera-service</div>
-                    <div className="mt-2"># Claim your Conway chain</div>
-                    <div>linera wallet init --faucet {config.faucetUrl}</div>
+                  <Button
+                    onClick={handleClaimChain}
+                    disabled={isBusy}
+                    className="w-full h-12 bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600"
+                  >
+                    {isBusy ? (
+                      <>
+                        <Loader2 className="mr-2 h-5 w-5 animate-spin" />
+                        Connecting...
+                      </>
+                    ) : (
+                      <>
+                        <Zap className="mr-2 h-5 w-5" />
+                        Connect Conway Wallet
+                      </>
+                    )}
+                  </Button>
+                </div>
+                
+                <div className="p-4 bg-blue-500/10 border border-blue-500/20 rounded-lg">
+                  <div className="flex items-center gap-2 text-blue-400 mb-2">
+                    <AlertCircle className="w-5 h-5" />
+                    <span className="font-semibold text-sm">Don't have a Conway wallet?</span>
+                  </div>
+                  <p className="text-xs text-gray-400 mb-2">
+                    Use Linera CLI to claim a testnet chain:
+                  </p>
+                  <div className="bg-gray-900/50 rounded p-2 font-mono text-xs text-green-400">
+                    linera wallet init --faucet {config.faucetUrl}
                   </div>
                 </div>
               </div>
@@ -109,19 +133,7 @@ export default function Connect() {
                 </p>
               </div>
             )}
-            
-            {/* Network notice */}
-            {network === 'conway' && (
-              <div className="p-4 bg-yellow-500/10 border border-yellow-500/20 rounded-lg">
-                <div className="flex items-center gap-2 text-yellow-400 mb-2">
-                  <AlertCircle className="w-5 h-5" />
-                  <span className="font-semibold">Browser-Based Claiming Not Supported</span>
-                </div>
-                <p className="text-sm text-gray-400 mb-2">
-                  Conway requires Linera CLI. Switch to local network for instant testing.
-                </p>
-              </div>
-            )}
+
 
             {/* Success State */}
             {isConnected && wallet && (

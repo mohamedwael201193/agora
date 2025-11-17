@@ -16,7 +16,6 @@ import LineraDemo from "./pages/LineraDemo";
 import Marketplace from "./pages/Marketplace";
 import NotFound from "./pages/NotFound";
 import Profile from "./pages/Profile";
-import Roadmap from "./pages/Roadmap";
 
 // Lazy-loaded routes for code-splitting
 const ChronoEchoes = lazy(() => import("./pages/ChronoEchoes"));
@@ -49,7 +48,6 @@ const App = () => (
               <Route path="/chrono-echoes" element={<ChronoEchoes />} />
               <Route path="/foundry" element={<FoundryBuilder />} />
               <Route path="/architecture" element={<Architecture />} />
-              <Route path="/roadmap" element={<Roadmap />} />
               <Route path="/profile" element={<Profile />} />
               <Route path="/demo/counter" element={<Counter />} />
               <Route path="/demo/transfer" element={<Transfer />} />

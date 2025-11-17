@@ -7,7 +7,8 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
-import { AgoraClient } from "@/lib/agoraClient";
+import { createAgoraClient } from "@/lib/agoraClient";
+import { useAgoraStore } from "@/stores/useAgoraStore";
 import {
     closestCenter,
     DndContext,
@@ -193,13 +194,10 @@ export default function FoundryBuilder() {
   const [activeId, setActiveId] = useState<string | null>(null);
   const [isDeploying, setIsDeploying] = useState(false);
   const { toast } = useToast();
+  const { wallet, network } = useAgoraStore();
 
-  // Initialize Linera client
-  const agoraClient = new AgoraClient({
-    nodeUrl: import.meta.env.VITE_NODE_URL || 'http://localhost:8080',
-    applicationId: import.meta.env.VITE_AGORA_APP_ID || '',
-    registryChainId: import.meta.env.VITE_REGISTRY_CHAIN_ID || '',
-  });
+  // Initialize Linera client with network detection
+  const agoraClient = createAgoraClient();
 
   const sensors = useSensors(
     useSensor(PointerSensor, {
@@ -250,10 +248,10 @@ export default function FoundryBuilder() {
       return;
     }
 
-    if (!import.meta.env.VITE_MARKET_CHAIN_ID) {
+    if (!wallet) {
       toast({
-        title: "Configuration Error",
-        description: "Market chain ID not configured. Run judge_quickstart.sh first.",
+        title: "Wallet Not Connected",
+        description: "Please connect your wallet first from the Connect page",
         variant: "destructive",
       });
       return;
@@ -262,65 +260,32 @@ export default function FoundryBuilder() {
     setIsDeploying(true);
 
     try {
-      console.log('[Foundry] Creating new chain for market...');
+      // Use the connected wallet's chain for the market
+      const marketChainId = wallet.chainId;
       
-      // Step 1: Create a new chain for this market
-      const backendUrl = import.meta.env.VITE_AGORA_BACKEND_URL || 'http://localhost:3001';
-      let newChainId: string;
+      console.log('[Foundry] Creating market on user chain:', marketChainId);
+      console.log('[Foundry] Network:', network);
       
-      try {
-        const chainResponse = await fetch(`${backendUrl}/api/chains/create`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' }
-        });
-        
-        if (!chainResponse.ok) {
-          throw new Error(`Failed to create chain: ${chainResponse.statusText}`);
-        }
-        
-        const chainData = await chainResponse.json();
-        newChainId = chainData.chainId;
-        
-        console.log('[Foundry] New chain created:', newChainId);
-        
-        toast({
-          title: "⛓️ New Chain Created",
-          description: `Created isolated chain for market: ${newChainId.substring(0, 8)}...`,
-          duration: 3000,
-        });
-      } catch (error) {
-        console.error('[Foundry] Failed to create new chain:', error);
-        toast({
-          title: "⚠️ Chain Creation Failed",
-          description: "Falling back to shared market chain. Each market should have its own chain.",
-          variant: "destructive",
-          duration: 4000,
-        });
-        // Fallback to shared chain
-        newChainId = import.meta.env.VITE_MARKET_CHAIN_ID;
-      }
-      
-      // Step 2: Calculate closes_at timestamp
+      // Calculate closes_at timestamp
       const durationDays = parseInt(marketDuration) || 7;
       const closesAt = Math.floor(Date.now() / 1000) + (durationDays * 24 * 60 * 60);
       
-      // Step 3: Create market on Linera using the new chain
-      console.log('[Foundry] Creating market on chain:', newChainId);
+      // Create market on Linera using the user's chain
       const result = await agoraClient.createMarket(
-        newChainId,
+        marketChainId,
         marketName,
         marketDescription || `A prediction market about: ${marketName}`,
         closesAt
       );
 
-      console.log('[Foundry] Market created successfully on chain:', newChainId);
+      console.log('[Foundry] Market created successfully:', result);
 
       // Wait for transaction to propagate
       await new Promise((resolve) => setTimeout(resolve, 1000));
 
       toast({
         title: "🚀 Market Deployed Successfully!",
-        description: `"${marketName}" created in DRAFT mode. Open it from the Marketplace to accept bets.`,
+        description: `"${marketName}" created on ${network} network. Open it from the Marketplace to accept bets.`,
         duration: 5000,
       });
 

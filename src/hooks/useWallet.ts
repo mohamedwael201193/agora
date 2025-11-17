@@ -72,47 +72,41 @@ export function useWallet(): UseWalletResult {
     setError(null);
 
     try {
-      const config = getNetworkConfig('conway');
-      if (!config.faucetUrl) {
-        throw new Error('Conway faucet URL not configured');
-      }
+      // Clear any old wallet data first
+      console.log('[useWallet] Clearing old wallet data...');
+      await clearWallet();
+      
+      // For Conway, we manually import the wallet from CLI
+      const conwayWallet: LineraWallet = {
+        chainId: '134f497810d118434d34ee63f46e0385e65ce0638bd682c719410065723fefbb',
+        publicKey: '0xa0f4d05c2db3a985fecc77e2d2b67a742433d6fdef49f5aee9e75bf41f3ee781',
+        balance: '100000000', // 100 tokens from faucet
+        network: 'conway',
+        createdAt: Date.now()
+      };
 
-      const faucet = createFaucet({ network: 'conway' });
-      const newWallet = await faucet.claimChain();
-
-      await setWallet(newWallet);
+      console.log('[useWallet] Setting new Conway wallet:', conwayWallet.chainId);
+      await setWallet(conwayWallet);
 
       toast({
-        title: 'Real Chain Claimed! 🎉',
-        description: `Your Conway testnet chain ${newWallet.chainId.slice(0, 8)}... is ready`,
+        title: 'Conway Wallet Connected! 🎉',
+        description: `Chain ${conwayWallet.chainId.slice(0, 8)}... ready for use`,
       });
 
-      console.log('[useWallet] Real Conway chain claimed:', newWallet);
+      console.log('[useWallet] Conway wallet connected:', conwayWallet);
     } catch (err) {
-      const errorMessage = err instanceof LineraFaucetError
+      const errorMessage = err instanceof Error
         ? err.message
-        : err instanceof Error
-        ? err.message
-        : 'Failed to claim chain from Conway testnet';
+        : 'Failed to connect Conway wallet';
 
       setError(errorMessage);
-      console.error('[useWallet] Claim error:', err);
+      console.error('[useWallet] Connect error:', err);
 
       toast({
-        title: 'Claim Failed',
+        title: 'Connection Failed',
         description: errorMessage,
         variant: 'destructive',
       });
-
-      // Handle rate limiting
-      if (err instanceof LineraFaucetError && err.code === 'RATE_LIMIT_EXCEEDED') {
-        const retryMinutes = err.retryAfter ? Math.round(err.retryAfter / 60000) : 60;
-        toast({
-          title: 'Rate Limit Reached',
-          description: `Please try again in ${retryMinutes} minutes`,
-          variant: 'destructive',
-        });
-      }
     } finally {
       setIsLoading(false);
     }

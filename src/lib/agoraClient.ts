@@ -169,13 +169,13 @@ export const createAgoraClient = (): AgoraClient => {
   
   // Default configurations
   const localConfig = {
-    nodeUrl: 'http://localhost:8080',
+    nodeUrl: import.meta.env.VITE_NODE_URL || 'http://localhost:8080',
     applicationId: import.meta.env.VITE_AGORA_APP_ID || '',
     registryChainId: import.meta.env.VITE_REGISTRY_CHAIN_ID || '',
   };
 
   const conwayConfig = {
-    nodeUrl: 'https://conway.testnet.linera.net',
+    nodeUrl: import.meta.env.VITE_NODE_URL || 'http://localhost:8081',
     applicationId: import.meta.env.VITE_AGORA_APP_ID || '',
     registryChainId: import.meta.env.VITE_REGISTRY_CHAIN_ID || '',
   };
