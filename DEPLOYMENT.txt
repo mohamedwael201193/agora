@@ -1,0 +1,134 @@
+# 🚀 DEPLOYMENT QUICK START
+
+## Step 1: Deploy Backend to Render (5 mins)
+
+### Prepare Wallet:
+```bash
+# Copy your Conway wallet
+cp ~/.config/linera/wallet.json ./wallet.json
+
+# Make sure it's in .gitignore (already done)
+```
+
+### Deploy to Render:
+1. Go to https://render.com
+2. Sign up with GitHub
+3. New Web Service → Import `mohamedwael201193/agora`
+4. Settings:
+   - **Environment**: Docker
+   - **Dockerfile Path**: `./Dockerfile`
+   - **Instance**: Starter ($7/month)
+5. Deploy!
+
+### Get Backend URL:
+After deployment: `https://agora-linera-backend.onrender.com`
+
+---
+
+## Step 2: Deploy Frontend to Vercel (3 mins)
+
+### Deploy:
+1. Go to https://vercel.com/new
+2. Import `mohamedwael201193/agora`
+3. Framework: **Vite**
+4. Build Command: `npm run build`
+5. Output: `dist`
+
+### Environment Variables (copy-paste these):
+
+```bash
+VITE_NETWORK=conway
+
+VITE_AGORA_APP_ID=884e8b8e86f60309cdf11dd920f121331e1fd4b07533adebdb6d8c653c496905
+
+VITE_REGISTRY_CHAIN_ID=134f497810d118434d34ee63f46e0385e65ce0638bd682c719410065723fefbb
+
+VITE_CONWAY_REGISTRY_CHAIN_ID=134f497810d118434d34ee63f46e0385e65ce0638bd682c719410065723fefbb
+
+VITE_CONWAY_APPLICATION_ID=884e8b8e86f60309cdf11dd920f121331e1fd4b07533adebdb6d8c653c496905
+
+# 👇 IMPORTANT: Replace with YOUR Render backend URL
+VITE_LINERA_VALIDATOR_URL=https://agora-linera-backend.onrender.com
+
+VITE_NODE_URL=https://agora-linera-backend.onrender.com
+
+VITE_LINERA_FAUCET_URL=https://faucet.testnet-conway.linera.net
+
+VITE_ENABLE_DEVTOOLS=true
+
+VITE_ENABLE_STRESS_TEST=false
+```
+
+6. Click **Deploy**
+
+---
+
+## Step 3: Test (1 min)
+
+1. Open: `https://agora-xxx.vercel.app`
+2. Click wallet icon → should connect
+3. Go to Marketplace → should show markets
+4. Create new market in Foundry
+
+---
+
+## ✅ DONE!
+
+**Frontend**: Vercel (free, fast CDN)
+**Backend**: Render ($7/month, runs Linera)
+
+**Total Cost**: $7/month for full blockchain app!
+
+---
+
+## Troubleshooting
+
+### Backend not starting:
+- Check Render logs
+- Verify wallet.json copied correctly
+- Make sure Dockerfile builds
+
+### Frontend can't connect:
+- Check Vercel environment variables
+- Verify `VITE_LINERA_VALIDATOR_URL` matches Render URL
+- Check CORS settings
+
+### Markets not loading:
+- Check backend is running (visit Render URL)
+- Check browser console for errors
+- Verify environment variables in Vercel
+
+---
+
+## Cost Breakdown
+
+**Render Backend**:
+- Starter: $7/month (512MB RAM)
+- Standard: $25/month (2GB RAM) - recommended
+
+**Vercel Frontend**:
+- Hobby: Free (100GB bandwidth)
+- Pro: $20/month (unlimited)
+
+**Total**: $7-25/month for production-ready blockchain app!
+
+---
+
+## Alternative: All Local (Free)
+
+If you want free deployment for demo:
+
+1. Keep running locally:
+   - `npm run dev` (port 8081)
+   - `linera service --port 9000`
+
+2. Use ngrok for public URL:
+   ```bash
+   ngrok http 8081
+   ```
+
+3. Get public URL: `https://xxx.ngrok.io`
+
+4. Share this URL for demo!
+
+**Cost**: $0 (ngrok free tier)

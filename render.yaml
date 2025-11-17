@@ -1,0 +1,12 @@
+services:
+  - type: web
+    name: agora-linera-backend
+    env: docker
+    plan: starter
+    region: oregon
+    branch: main
+    dockerfilePath: ./Dockerfile
+    envVars:
+      - key: RUST_LOG
+        value: info
+    healthCheckPath: /
