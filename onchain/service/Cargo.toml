@@ -1,0 +1,14 @@
+[package]
+name = "agora-service"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+linera-sdk = { workspace = true }
+async-graphql = { workspace = true }
+serde = { workspace = true }
+thiserror = { workspace = true }
+tokio = { workspace = true }
+
+[lib]
+path = "src/lib.rs"

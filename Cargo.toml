@@ -1,0 +1,56 @@
+[workspace]
+resolver = "2"
+members = [
+    "onchain/agora",
+]
+
+[workspace.package]
+version = "0.1.0"
+edition = "2021"
+rust-version = "1.77.2"
+authors = ["Agora Team"]
+license = "Apache-2.0"
+
+[workspace.dependencies]
+# Linera SDK 0.15.5 (soft-fork requirement)
+linera-sdk = "0.15.5"
+linera-views = "0.15.5"
+async-graphql = { version = "=7.0.17", default-features = false }
+async-trait = "0.1"
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+thiserror = "1.0"
+tokio = { version = "1.40", features = ["full"] }
+tracing = "0.1"
+bcs = "0.1"
+futures = "0.3"
+
+[package]
+name = "agora-counter"
+version.workspace = true
+edition.workspace = true
+
+[dependencies]
+async-graphql.workspace = true
+linera-sdk.workspace = true
+futures.workspace = true
+serde.workspace = true
+serde_json.workspace = true
+
+[dev-dependencies]
+linera-sdk = { version = "0.15.3", features = ["test", "wasmer"] }
+tokio = { version = "1.40", features = ["rt", "sync"] }
+
+[[bin]]
+name = "agora_counter_contract"
+path = "src/contract.rs"
+
+[[bin]]
+name = "agora_counter_service"
+path = "src/service.rs"
+
+[profile.release]
+debug = true
+lto = true
+opt-level = 'z'
+strip = 'debuginfo'

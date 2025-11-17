@@ -1,0 +1,23 @@
+[package]
+name = "market"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+linera-sdk = { workspace = true }
+async-graphql = { workspace = true }
+serde = { workspace = true }
+thiserror = { workspace = true }
+bcs = { workspace = true }
+tokio = { workspace = true }
+
+[[bin]]
+name = "market_contract"
+path = "src/contract.rs"
+
+[[bin]]
+name = "market_service"
+path = "src/service.rs"
+
+[lib]
+path = "src/lib.rs"

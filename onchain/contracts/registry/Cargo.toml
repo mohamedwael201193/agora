@@ -1,0 +1,30 @@
+[package]
+name = "registry"
+version.workspace = true
+edition.workspace = true
+
+[dependencies]
+async-graphql.workspace = true
+async-trait.workspace = true
+linera-sdk.workspace = true
+serde.workspace = true
+serde_json.workspace = true
+thiserror.workspace = true
+bcs.workspace = true
+
+[dev-dependencies]
+linera-sdk = { workspace = true, features = ["test", "wasmer"] }
+tokio.workspace = true
+
+[lib]
+path = "src/lib.rs"
+
+[[bin]]
+name = "registry_contract"
+path = "src/contract.rs"
+
+[[bin]]
+name = "registry_service"
+path = "src/service.rs"
+
+[build-dependencies]
