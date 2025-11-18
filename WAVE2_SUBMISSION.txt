@@ -1,0 +1,55 @@
+# AGORA - WAVE 2 SUBMISSION
+
+## What is Agora?
+Agora is a decentralized prediction market platform on Linera blockchain where users create markets, place predictions, and trade outcomes with real-time settlement.
+
+## Wave 2: Conway Testnet Integration
+
+### Live Deployment ✅
+**Chain:** 134f497810d118434d34ee63f46e0385e65ce0638bd682c719410065723fefbb
+**App ID:** 884e8b8e86f60309cdf11dd920f121331e1fd4b07533adebdb6d8c653c496905
+**Balance:** 100 tokens | **Blocks:** 11 on real validators
+
+### Tech Stack
+- **Contracts:** Linera SDK 0.15.6, Rust + Wasm, GraphQL service
+- **Frontend:** React 18, TypeScript 5.5, Vite, Zustand, TailwindCSS
+- **Validators:** 4 Conway nodes (validator-1 to validator-4.testnet-conway.linera.net)
+
+### Deployment Command
+```bash
+linera publish-and-create \
+  agora_contract.wasm agora_service.wasm \
+  --json-parameters '{"registry_chain_id":"134f497810..."}'
+```
+
+### Features
+1. **Market Creation** - Custom questions, multiple outcomes, deadlines, on-chain storage
+2. **Wallet** - Conway wallet import, balance display, IndexedDB persistence
+3. **Marketplace** - Browse live markets with real-time blockchain updates
+4. **Predictions** - Token-staked predictions on any outcome
+
+### Live Proof
+Test market "btc to 150k ?" (ID: 0) created on Conway testnet
+
+**Verify:**
+```bash
+linera wallet show  # Shows 11 blocks
+curl http://localhost:9000 -d '{"query":"{ markets { id } }"}'
+```
+
+### Structure
+- `/onchain/contracts/market` - Market contract
+- `/src/pages/FoundryBuilder.tsx` - Creation UI
+- `/src/lib/lineraClient.ts` - Blockchain client
+- `/scripts/deploy_conway.sh` - Deploy automation
+
+### Results
+✅ Real Conway integration (not simulated)
+✅ 11 blockchain blocks created
+✅ Markets stored on-chain permanently
+✅ Frontend queries real validators
+✅ Production ready (Docker + Vercel)
+
+**Repo:** github.com/mohamedwael201193/agora | **Commit:** e53e4f2
+
+All data on real Linera validators - verifiable via CLI and blockchain queries.
